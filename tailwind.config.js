@@ -4,9 +4,14 @@ module.exports = {
   content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
   theme: {
   	extend: {
+  		screens: {
+  			xs: '320px',
+  			'md-2': '800px',
+  			'3xl': '2040px'
+  		},
   		fontFamily: {
   			sans: [
-  				'Inter',
+  				'Outfit',
   				'sans-serif'
   			]
   		},

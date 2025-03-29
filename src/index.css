@@ -2,11 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* this can be changing (please refer tailwind.config.js) ... */
-body {
-  font-family: 'Inter', sans-serif;
-}
-
 @layer base {
   :root {
     --background: 0 0% 100%;

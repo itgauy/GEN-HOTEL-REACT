@@ -24,3 +24,7 @@ package-lock.json
 *.njsproj
 *.sln
 *.sw?
+
+# confidential
+.env*
+.env.local*
