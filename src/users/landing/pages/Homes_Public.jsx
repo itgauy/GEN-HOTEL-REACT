@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import useRoomStore from "../stores/Room_Public.stores";
+import useRoomStore from "../stores/roompublic.stores";
 
 function StaySuite_Homes_Public() {
     const { rooms, fetchRooms, loading, error } = useRoomStore();
