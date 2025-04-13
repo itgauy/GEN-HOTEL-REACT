@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react'
+import { useState, useEffect, Fragment } from 'react'
 import { BrowserRouter as Router, Routes, useLocation } from 'react-router-dom';
 import LandingRoutes from './users/landing/routes/LandingRoutes';
 import LoginRoutes from './users/credentials/Login_Routes';
@@ -7,22 +7,32 @@ import RoomAdminRoutes from './users/administrators/room_management/routes/RoomA
 import ReservationAdminRoutes from './users/administrators/booking_reservations/routes/ReservationAdmin';
 import KnowledgeAdminRoutes from './users/administrators/knowledge/routes/KnowledgeAdmin';
 import BookingAssistanceRoutes from './users/administrators/booking_assistance/routes/AssistanceAdmin';
+// import useAuthStore from './users/credentials/stores/LoginAuth';
+
+const pageTitles = {
+  "/": "Hotels & Condominiums Just for You!",
+  "/login": "SBIT-3O | Login",
+  "/room-admin": "SBIT-3O | Administrator",
+  "/unauthorized": "SBIT-3O | Access Denied",
+};
 
 function TitleUpdater() {
   const location = useLocation();
 
   useEffect(() => {
-    document.title = pageTitles[location.pathname] || "StaySuite | Hotels & Condominiums Just for You!";
-    document.body.className = pageStyles[location.pathname] || "bg-white";
+    document.title = pageTitles[location.pathname] || "Hotels & Condominiums Just for You!";
   }, [location.pathname]);
 
   return null;
 }
 
 function App() {
+
+  // Check authentication on app load
+
   return (
     <Router>
-      {/* <TitleUpdater /> */}
+      <TitleUpdater />
       <Routes>
         {...LandingRoutes()}
         {...LoginRoutes()}

@@ -16,7 +16,7 @@ export function Navbar_User({ className, ...props }) {
       <div className="lg:container mx-auto flex h-16 items-center justify-between px-4">
         <div className="flex items-center">
           <Link to="" className="text-xl font-bold">
-            StaySuite
+            Hotels
           </Link>
         </div>
         <nav className="flex items-center gap-6">

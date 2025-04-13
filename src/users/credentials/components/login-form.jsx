@@ -9,8 +9,39 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+// import useAuthStore from "../stores/LoginAuth";
 
 export function LoginForm({ className, ...props }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  // const { login, loading } = useAuthStore();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+
+    try {
+      const user = await login(email, password);
+
+      // Role-based routing
+      const roles = user.employee_role || [];
+      switch (true) {
+        case roles.includes("Manager"):
+          navigate("/room-admin");
+          break;
+        default:
+          setError("Access denied: Insufficient role permissions");
+          break;
+      }
+    } catch (err) {
+      setError(err.message || "Invalid email or password");
+    }
+  };
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -51,7 +82,7 @@ export function LoginForm({ className, ...props }) {
               <div className="grid gap-6">
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="m@example.com" required />
+                  <Input id="email" type="email" placeholder="yourmail@mail.xyz" required />
                 </div>
                 <div className="grid gap-2">
                   <div className="flex items-center">

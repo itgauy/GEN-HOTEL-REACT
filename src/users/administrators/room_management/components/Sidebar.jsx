@@ -27,7 +27,7 @@ const data = {
   user: {
     name: "Kenneth O.",
     email: "k80308392@gmail.com",
-    avatar: "https://github.com/lash0000.png",
+    avatar: "https://github.com/golash0000.png",
   },
   navMain: [
     {
