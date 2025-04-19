@@ -29,12 +29,7 @@ const data = {
   },
   navMain: [
     {
-      title: "Title 1",
-      url: "#",
-      icon: Home,
-    },
-    {
-      title: "Title 2",
+      title: "Payments",
       url: "#",
       icon: FileText,
     },

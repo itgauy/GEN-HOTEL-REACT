@@ -1,18 +1,20 @@
-import { useState, useEffect, Fragment } from 'react'
-import { BrowserRouter as Router, Routes, useLocation } from 'react-router-dom';
+import { useState, useEffect, Fragment } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import LandingRoutes from './users/landing/routes/LandingRoutes';
-import LoginRoutes from './users/credentials/Login_Routes';
+import LoginRoutes from './users/credentials/routes/Login_Routes';
 import GuestUserRoute from './users/guests/routes/GuestRoute';
 import RoomAdminRoutes from './users/administrators/room_management/routes/RoomAdmin';
 import ReservationAdminRoutes from './users/administrators/booking_reservations/routes/ReservationAdmin';
 import KnowledgeAdminRoutes from './users/administrators/knowledge/routes/KnowledgeAdmin';
 import BookingAssistanceRoutes from './users/administrators/booking_assistance/routes/AssistanceAdmin';
-// import useAuthStore from './users/credentials/stores/LoginAuth';
 
 const pageTitles = {
   "/": "Hotels & Condominiums Just for You!",
   "/login": "SBIT-3O | Login",
-  "/room-admin": "SBIT-3O | Administrator",
+  "/room-admin": "Room Management | SBIT-3O | Administrator",
+  "/kms-admin": "Knowledge Management | SBIT-3O | Administrator",
+  "/reservations-admin": "Reservations | SBIT-3O | Administrator",
+  "/assistance-admin": "Assistance Inquiries | SBIT-3O | Administrator",
   "/unauthorized": "SBIT-3O | Access Denied",
 };
 
@@ -28,7 +30,9 @@ function TitleUpdater() {
 
 function App() {
 
-  // Check authentication on app load
+  // List of public routes that do not require authentication
+  const publicRoutes = ['/', '/homes', '/homes/room', '/blog', '/story', '/unauthorized', '/user/onboard', 
+  '/user/onboard/blog', '/user/onboard/bookings', '/homes/room'];
 
   return (
     <Router>
@@ -43,7 +47,8 @@ function App() {
         {...BookingAssistanceRoutes()}
       </Routes>
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;
+  

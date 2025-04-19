@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import useRoomStore from "../stores/roompublic.stores";
+import { LoaderCircle } from "lucide-react";
 
 function StaySuite_Homes_Public() {
     const { rooms, fetchRooms, loading, error } = useRoomStore();
@@ -9,7 +10,14 @@ function StaySuite_Homes_Public() {
         fetchRooms();
     }, []);
 
-    if (loading) return <p>Loading rooms...</p>;
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <LoaderCircle className="animate-spin text-black" size={32} />
+            </div>
+        );
+    }
+    
     if (error) return <p>Error loading rooms: {error}</p>;
 
     return (

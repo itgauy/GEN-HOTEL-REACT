@@ -18,7 +18,7 @@ export function Navbar_Public({ className, ...props }) {
                         Blog
                     </Link>
                     <Button asChild variant="default" className="rounded-md">
-                        <Link to="/login">Login</Link>
+                        <Link to="/auth/login">Login</Link>
                     </Button>
                 </nav>
             </div>
