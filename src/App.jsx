@@ -30,10 +30,6 @@ function TitleUpdater() {
 
 function App() {
 
-  // List of public routes that do not require authentication
-  const publicRoutes = ['/', '/homes', '/homes/room', '/blog', '/story', '/unauthorized', '/user/onboard', 
-  '/user/onboard/blog', '/user/onboard/bookings', '/homes/room'];
-
   return (
     <Router>
       <TitleUpdater />

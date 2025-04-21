@@ -176,7 +176,9 @@ export function NavUser() {
               <AlertDialogAction
                 onClick={() => {
                   logout();
-                  navigate("/auth");
+                  setTimeout(() => {
+                    navigate("/");
+                  }, 0);
                 }}
               >
                 Proceed

@@ -2,6 +2,7 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbS
 import { Link } from "react-router-dom"
 import useRoomStore from "../stores/rooms.stores";
 import { useEffect } from "react";
+import { LoaderCircle } from "lucide-react";
 
 function StaySuite_User_Onboard() {
   const { rooms, fetchRooms, loading, error } = useRoomStore();
@@ -10,7 +11,13 @@ function StaySuite_User_Onboard() {
       fetchRooms();
   }, []);
 
-  if (loading) return <p>Loading rooms...</p>;
+  if (loading) {
+      return (
+          <div className="flex items-center justify-center h-screen">
+              <LoaderCircle className="animate-spin text-black" size={32} />
+          </div>
+      );
+  }
   if (error) return <p>Error loading rooms: {error}</p>;
 
     return (
@@ -29,7 +36,7 @@ function StaySuite_User_Onboard() {
             <div className="grid xs:grid-cols-2 lg:grid-cols-4 gap-6">
                 {rooms.length > 0 ? (
                     rooms.map((room) => (
-                        <Link to="/homes/room" key={room._id} className="space-y-3">
+                        <Link to="/user/onboard/room" key={room._id} className="space-y-3">
                             <div className="rounded-lg overflow-hidden select-none">
                                 <img
                                     src={room.room_details[0]?.room_images[0]?.media_files[0]?.file_url || ""}

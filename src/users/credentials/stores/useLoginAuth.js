@@ -73,9 +73,8 @@ const useLoginAuth = create(
       logout: () => {
         deleteCookie('refresh_token');
         set({ isAuthenticated: false, refreshToken: null, user: null });
-        localStorage.clear();
-        sessionStorage.clear();
-      },
+        localStorage.removeItem('auth-storage');
+      },      
     }),
     {
       name: 'auth-storage',

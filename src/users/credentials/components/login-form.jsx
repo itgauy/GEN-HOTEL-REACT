@@ -26,53 +26,60 @@ export function LoginForm({ className, ...props }) {
     e.preventDefault();
     setLoading(true);
     setError("");
-
+  
     const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier);
     const credentials = {
       ...(isEmail ? { email_address: identifier } : { username: identifier }),
       password,
     };
-
+  
     console.log("🔐 Submitting credentials:", credentials);
-
+  
     try {
       await login(credentials); // Call the login function
-
+  
       const updatedUser = useLoginAuth.getState().user;
       console.log("📦 Updated Zustand User:", updatedUser);
-      
-      const role = Array.isArray(updatedUser?.employee_role)
-      ? updatedUser.employee_role.join(" ")
-      : "";
-      console.log("🔍 Detected Role:", role);
-
+  
+      // Check for roles in both staff and guest types
+      const roles = [
+        ...(Array.isArray(updatedUser?.employee_role) ? updatedUser.employee_role : []),
+        ...(Array.isArray(updatedUser?.guest_role) ? updatedUser.guest_role : [])
+      ];
+      const combinedRole = roles.join(" ");
+      console.log("🔍 Detected Combined Role:", combinedRole);
+  
       // Role-based navigation
       switch (true) {
-        case /Manager/i.test(role):
+        case /Manager/i.test(combinedRole):
           navigate("/auth/login/manager-check");
           break;
-        case /Staff\s*\+?\s*Room Data Management/i.test(role):
+        case /Guest User/i.test(combinedRole):
+          navigate("/user/onboard");
+          break;
+        case /Staff\s*\+?\s*Room Data Management/i.test(combinedRole):
           navigate("/room-admin");
           break;
-        case /Staff\s*\+?\s*Booking Reservations Department/i.test(role):
+        case /Staff\s*\+?\s*Booking Reservations Department/i.test(combinedRole):
           navigate("/reservations-admin");
           break;
-        case /Staff\s*\+?\s*Booking Assistance Inquiries/i.test(role):
+        case /Staff\s*\+?\s*Booking Assistance Inquiries/i.test(combinedRole):
           navigate("/assistance-admin");
           break;
-        case /Staff\s*\+?\s*Knowledge\s*\/\s*Article\s*Managing/i.test(role):
+        case /Staff\s*\+?\s*Knowledge\s*\/\s*Article\s*Managing/i.test(combinedRole):
           navigate("/kms-admin");
           break;
         default:
           navigate("/unauthorized");
       }
+  
     } catch (err) {
       console.error("❌ Login Error:", err);
       setError("Login failed. Please check your credentials.");
     } finally {
       setLoading(false);
     }
-  };
+  };  
 
   const isLoginDisabled = !identifier || !password || loading;
 

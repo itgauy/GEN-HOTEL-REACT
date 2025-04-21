@@ -8,6 +8,8 @@ import StaySuite_Public_Blogs from '../pages/Blog';
 import StaySuite_Public_Blog_Article from '../pages/Blog_Article';
 import Unauthorized from '../pages/Unauthorized';
 import { CheckAuth } from '@/lib/Auth';
+import ErrorPage from '../pages/404';
+import RegistrationSuccess from '../pages/RegistrationSuccess';
 
 const LandingRoutes = () => [
     <Route path="/" element={<CheckAuth><StaySuite_Public /></CheckAuth>}>
@@ -18,6 +20,8 @@ const LandingRoutes = () => [
       <Route path="/blog" element={<StaySuite_Public_Blogs />} />
       <Route path="/story" element={<StaySuite_Public_Blog_Article />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
+      <Route path="/registration-success" element={<RegistrationSuccess />} />
+      <Route path="*" element={<ErrorPage />} />
     </Route>
 ]
 

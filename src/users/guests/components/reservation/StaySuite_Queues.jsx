@@ -400,7 +400,7 @@ function StaySuite_User_Booking_Queues() {
       <section className="lg:col-span-5 lg:sticky lg:top-24 lg:self-start shadow-lg bg-white border rounded-xl p-6">
         <div className="w-full space-y-4">
           <Tabs defaultValue="cash">
-            <TabsList className="grid w-full grid-cols-2">x
+            <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="cash">Pay thru Cash</TabsTrigger>
               <TabsTrigger value="paypal" disabled>
                 Pay thru PayPal

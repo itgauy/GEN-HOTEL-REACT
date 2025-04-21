@@ -1,8 +1,23 @@
 import { GalleryVerticalEnd } from "lucide-react"
-import { LoginForm } from "../components/login-form"
 import { RegisterForm } from "../components/register-form";
+import { useEffect } from "react";
 
 function Hotel_Registration() {
+    useEffect(() => {
+        console.log("you are now here....")
+        history.replaceState(null, "", window.location.href);
+
+        // Optional: You can also block forward navigation
+        window.history.pushState(null, "", window.location.href);
+        window.onpopstate = () => {
+            history.go(1); // Pushes user forward if they try to go back
+        };
+
+        return () => {
+            window.onpopstate = null;
+        };
+    }, []);
+
     return (
         <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
             <div className="flex w-full max-w-md flex-col gap-6">

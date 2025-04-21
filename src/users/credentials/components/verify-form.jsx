@@ -1,28 +1,34 @@
 import { useState, useRef, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { cn } from "@/lib/utils"
+import useGuestSignup from "../stores/useGuestSignup"
 
-export function OtpVerification({ email = "user@example.com", onVerify = () => {} }) {
+export function OtpVerification() {
+  const { verifyOTP } = useGuestSignup()
+  const navigate = useNavigate()
+
+  // ✅ Get email from localStorage guest-signup-storage
+  const stored = JSON.parse(localStorage.getItem("guest-signup-storage") || "{}")
+  const email = stored?.state?.email || "user@example.com"
+
   const [otp, setOtp] = useState(["", "", "", "", "", ""])
   const [isResending, setIsResending] = useState(false)
   const inputRefs = useRef([])
   const [timer, setTimer] = useState(60)
 
   useEffect(() => {
-    // Focus the first input on component mount
-    if (inputRefs.current[0]) {
-      inputRefs.current[0].focus()
-    }
+    if (inputRefs.current[0]) inputRefs.current[0].focus()
 
-    // Start countdown timer
     const interval = setInterval(() => {
-      setTimer((prevTimer) => {
-        if (prevTimer <= 1) {
+      setTimer((prev) => {
+        if (prev <= 1) {
           clearInterval(interval)
           return 0
         }
-        return prevTimer - 1
+        return prev - 1
       })
     }, 1000)
 
@@ -30,23 +36,18 @@ export function OtpVerification({ email = "user@example.com", onVerify = () => {
   }, [])
 
   const handleChange = (index, value) => {
-    // Only allow numbers
     if (!/^\d*$/.test(value)) return
 
-    // Update the OTP array
     const newOtp = [...otp]
     newOtp[index] = value
-
     setOtp(newOtp)
 
-    // Auto-focus next input if current input is filled
     if (value && index < 5 && inputRefs.current[index + 1]) {
       inputRefs.current[index + 1].focus()
     }
   }
 
   const handleKeyDown = (index, e) => {
-    // Move to previous input on backspace if current input is empty
     if (e.key === "Backspace" && !otp[index] && index > 0) {
       inputRefs.current[index - 1].focus()
     }
@@ -54,42 +55,32 @@ export function OtpVerification({ email = "user@example.com", onVerify = () => {
 
   const handlePaste = (e) => {
     e.preventDefault()
-    const pastedData = e.clipboardData.getData("text/plain").trim()
-
-    // Check if pasted content is a 6-digit number
-    if (/^\d{6}$/.test(pastedData)) {
-      const digits = pastedData.split("")
-      setOtp(digits)
-
-      // Focus the last input
-      if (inputRefs.current[5]) {
-        inputRefs.current[5].focus()
-      }
+    const pasted = e.clipboardData.getData("text/plain").trim()
+    if (/^\d{6}$/.test(pasted)) {
+      setOtp(pasted.split(""))
+      inputRefs.current[5]?.focus()
     }
   }
 
   const handleResendOtp = () => {
     if (timer === 0) {
       setIsResending(true)
-
-      // Simulate API call to resend OTP
       setTimeout(() => {
         setTimer(60)
         setIsResending(false)
-        // Clear the OTP fields
         setOtp(["", "", "", "", "", ""])
-        // Focus the first input
-        if (inputRefs.current[0]) {
-          inputRefs.current[0].focus()
-        }
+        inputRefs.current[0]?.focus()
       }, 1500)
     }
   }
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     const otpString = otp.join("")
     if (otpString.length === 6) {
-      onVerify(otpString)
+      const result = await verifyOTP(otpString)
+      if (result.success) {
+        navigate("/auth/login/registration")
+      }
     }
   }
 
@@ -121,11 +112,7 @@ export function OtpVerification({ email = "user@example.com", onVerify = () => {
             ))}
           </div>
 
-          <Button
-            onClick={handleVerify}
-            className="w-full"
-            disabled={otp.join("").length !== 6}
-          >
+          <Button onClick={handleVerify} className="w-full" disabled={otp.join("").length !== 6}>
             Verify
           </Button>
 
