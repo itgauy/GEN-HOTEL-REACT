@@ -10,7 +10,7 @@ import useGuestSignup from "../stores/useGuestSignup"
 export function RegisterForm({ className, ...props }) {
     const navigate = useNavigate()
     const { register_account } = useGuestSignup()
-
+    const [loading, setLoading] = useState(false);
     const [passwordMatch, setPasswordMatch] = useState({ match: true, message: "" })
     const [formData, setFormData] = useState({
         firstName: "",
@@ -171,7 +171,14 @@ export function RegisterForm({ className, ...props }) {
                         )}
 
                         <Button type="submit" className="w-full" disabled={!passwordMatch.match}>
-                            Proceed
+                            {loading ? (
+                                <span className="flex items-center justify-center gap-2">
+                                    <LoaderCircle className="animate-spin" size={18} />
+                                    Verifying...
+                                </span>
+                            ) : (
+                                "Proceed"
+                            )}
                         </Button>
 
                         <div className="text-center text-sm">

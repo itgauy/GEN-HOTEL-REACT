@@ -9,7 +9,7 @@ import OtpVerificationPage from '../pages/RegisterOTP';
 
 const AuthRoutes = () => [
   <Route path="/auth/login" element={<Outlet />}>
-    <Route index element={<StaySuite_Login />} />
+    <Route index element={<CheckAuth><StaySuite_Login /></CheckAuth>} />
     <Route path="/auth/login/manager-check" element={<CheckAuth><Navigate /></CheckAuth>} />
     <Route path="/auth/login/register" element={<CheckAuth><SignUp /></CheckAuth>} />
     <Route path="/auth/login/register/verify" element={<RegisterAuth><OtpVerificationPage /></RegisterAuth>} />

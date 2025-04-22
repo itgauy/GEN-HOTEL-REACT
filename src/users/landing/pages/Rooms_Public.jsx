@@ -237,23 +237,6 @@ function StaySuite_Rooms_Public() {
                 day_disabled: "text-muted-foreground opacity-50 line-through",
               }}
             />
-
-            {/* Check Out Calendar */}
-            {/* <Calendar
-                            mode="single"
-                            selected={checkOutMain}
-                            onSelect={(date) => {
-                                if (date && date > checkInMain) {
-                                    setCheckOutMain(date);
-                                }
-                            }}
-                            disabled={(date) => date <= checkInMain}
-                            className="rounded-md border border-slate-300 lg:w-[360px]"
-                            day="lg:w-12 lg:h-10"
-                            classNames={{
-                                day_disabled: "text-muted-foreground opacity-50 line-through",
-                            }}
-                        /> */}
           </div>
         </div>
       </section>
@@ -306,7 +289,7 @@ function StaySuite_Rooms_Public() {
               </div>
             </DialogTrigger>
 
-            <DialogContent className="max-w-[920px]">
+            <DialogContent className="max-w-[720px]">
               <DialogHeader>
                 <DialogTitle className="text-2xl">
                   Booking Reservation
@@ -327,20 +310,20 @@ function StaySuite_Rooms_Public() {
                       <div className="rounded-md border">
                         <div className="flex max-sm:flex-col">
                           {/* Calendar Selection */}
+
                           <Calendar
-                            mode="single"
-                            selected={checkInModal}
+                            mode="range"
+                            selected={checkInMain}
                             onSelect={(date) => {
                               if (date) {
-                                setCheckInModal(date);
-                                setCheckOutModal(null);
+                                setCheckInMain(date);
+                                setCheckOutMain(null);
                               }
                             }}
                             className="lg:w-[250px]"
                             disabled={(date) => isBefore(date, today)}
                             classNames={{
-                              day_disabled:
-                                "text-muted-foreground opacity-50 line-through",
+                              day_disabled: "text-muted-foreground opacity-50 line-through",
                             }}
                           />
 
@@ -395,71 +378,6 @@ function StaySuite_Rooms_Public() {
 
                       {/* Check Out Calendar */}
 
-                      <div className="rounded-md border">
-                        <div className="flex max-sm:flex-col">
-                          <Calendar
-                            mode="single"
-                            selected={checkOutModal}
-                            onSelect={(date) => {
-                              if (date && date > checkInModal) {
-                                setCheckOutModal(date);
-                                setTimeCheckOut(null); // Reset time when date changes
-                              }
-                            }}
-                            disabled={(date) => date <= checkInModal}
-                            className="lg:w-[250px]"
-                            classNames={{
-                              day_disabled:
-                                "text-muted-foreground opacity-50 line-through",
-                            }}
-                          />
-                          <div className="relative w-full max-sm:h-48 sm:w-40">
-                            <div className="absolute inset-0 py-4 max-sm:border-t">
-                              <ScrollArea className="h-full sm:border-s">
-                                <div className="space-y-3">
-                                  <div className="flex h-5 shrink-0 items-center px-5">
-                                    <p className="text-sm font-medium">
-                                      {format(date, "EEEE, d")}
-                                    </p>
-                                  </div>
-                                  <div className="grid gap-1.5 px-5 max-sm:grid-cols-2">
-                                    {timeSlots.map(
-                                      ({ time: timeSlot, available }) => {
-                                        const dateObj = new Date(timeSlot);
-                                        const formattedTime =
-                                          dateObj.toLocaleTimeString("en-US", {
-                                            hour: "numeric",
-                                            minute: "2-digit",
-                                            hour12: true,
-                                          });
-
-                                        return (
-                                          <Button
-                                            key={timeSlot}
-                                            variant={
-                                              timeCheckOut === timeSlot
-                                                ? "default"
-                                                : "outline"
-                                            }
-                                            size="sm"
-                                            className="w-full"
-                                            onClick={() =>
-                                              setTimeCheckOut(timeSlot)
-                                            }
-                                            disabled={!available}
-                                          >
-                                            {formattedTime}
-                                          </Button>
-                                        );
-                                      }
-                                    )}
-                                  </div>
-                                </div>
-                              </ScrollArea>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
                     </div>
                     <div className="space-y-2 mb-4">
                       <span className="block font-semibold text-2xl">
@@ -476,15 +394,15 @@ function StaySuite_Rooms_Public() {
                           <p>Age 13+</p>
                         </div>
                         <div className="flex items-center space-x-4">
-                          <button id="subtract">
+                          <Button id="add" className="px-2" variant="outline">
                             <CircleMinus />
-                          </button>
+                          </Button>
                           <div id="count" className="text-lg">
                             1
                           </div>
-                          <button id="add">
+                          <Button id="add" className="px-2" variant="outline">
                             <CirclePlus />
-                          </button>
+                          </Button>
                         </div>
                       </div>
                       <div className="flex flex-row items-center justify-between border rounded-lg border-slate-400 p-4">
@@ -495,15 +413,15 @@ function StaySuite_Rooms_Public() {
                           <p>Age 2-12</p>
                         </div>
                         <div className="flex items-center space-x-4">
-                          <button id="subtract">
+                          <Button id="add" className="px-2" variant="outline">
                             <CircleMinus />
-                          </button>
+                          </Button>
                           <div id="count" className="text-lg">
                             1
                           </div>
-                          <button id="add">
+                          <Button id="add" className="px-2" variant="outline">
                             <CirclePlus />
-                          </button>
+                          </Button>
                         </div>
                       </div>
                       <div className="flex flex-row items-center justify-between border rounded-lg border-slate-400 p-4">
@@ -514,15 +432,15 @@ function StaySuite_Rooms_Public() {
                           <p>Under 2</p>
                         </div>
                         <div className="flex items-center space-x-4">
-                          <button id="subtract">
+                          <Button id="add" className="px-2" variant="outline">
                             <CircleMinus />
-                          </button>
+                          </Button>
                           <div id="count" className="text-lg">
                             1
                           </div>
-                          <button id="add">
+                          <Button id="add" className="px-2" variant="outline">
                             <CirclePlus />
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     </div>

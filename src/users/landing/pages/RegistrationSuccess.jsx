@@ -4,8 +4,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useNavigate } from "react-router-dom"
 
 export default function RegistrationSuccess() {
-  const navigate = useNavigate()
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-green-50 to-white p-4">
       <div className="w-full max-w-md">
@@ -21,22 +19,17 @@ export default function RegistrationSuccess() {
           </CardHeader>
           <CardContent className="text-center space-y-4">
             <p className="text-gray-600">
-              Thank you for joining us! Your registration is now complete and you can start using our services.
+              Thank you for joining us! You can start now booking reservations with our hotel services.
             </p>
             <div className="bg-green-50 p-4 rounded-lg border border-green-100">
               <h3 className="font-medium text-green-800 mb-2">What's next?</h3>
               <ul className="text-sm text-gray-600 space-y-1 text-left list-disc list-inside">
                 <li>Explore available features</li>
                 <li>Book your first hotel reservation</li>
-                <li>Check out our getting started guide with our blogs page</li>
+                <li>Check out our informative guides with our article blogs page</li>
               </ul>
             </div>
           </CardContent>
-          <CardFooter>
-            <Button className="w-full bg-green-600 hover:bg-green-700" onClick={() => navigate("/dashboard")}>
-              Go to Dashboard
-            </Button>
-          </CardFooter>
         </Card>
       </div>
     </div>
