@@ -2,19 +2,40 @@ import { useEffect } from "react";
 import { GalleryVerticalEnd } from "lucide-react";
 import { OtpVerification } from "../components/verify-form";
 
+// Helper function to delete a cookie by name
+function deleteCookie(name) {
+  document.cookie = `${name}=; Max-Age=0; path=/;`;
+}
+
 function OtpVerificationPage() {
   useEffect(() => {
-    // Inside the protected route this is good enough to clear history instead.
+    // Prevent back navigation
     history.replaceState(null, "", window.location.href);
-
-    // Optional: You can also block forward navigation
     window.history.pushState(null, "", window.location.href);
-    window.onpopstate = () => {
-      history.go(1); // Pushes user forward if they try to go back
+    window.onpopstate = () => history.go(1);
+
+    // Prompt confirmation before tab close / page unload
+    const handleBeforeUnload = (event) => {
+      const message = "Are you sure you want to leave this page? Your verification session will be lost.";
+      event.preventDefault();
+      event.returnValue = message;
+      return message;
     };
+
+    // Cleanup logic on unload
+    const handleUnload = () => {
+      localStorage.removeItem("guest-signup-storage");
+      deleteCookie("hotel-guest-registration");
+      sessionStorage.removeItem("temporary_access");
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("unload", handleUnload);
 
     return () => {
       window.onpopstate = null;
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("unload", handleUnload);
     };
   }, []);
 
