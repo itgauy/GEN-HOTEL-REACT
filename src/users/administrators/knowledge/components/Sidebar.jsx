@@ -34,19 +34,14 @@ const data = {
       icon: Home,
     },
     {
-      title: "Information Management",
+      title: "Content Management",
       url: "#",
       icon: FileText,
     },
     {
-      title: "Articles Management",
+      title: "Articles",
       url: "#",
       icon: Activity,
-    },
-    {
-      title: "FAQs Management",
-      url: "#",
-      icon: LayoutDashboard,
     },
     {
       title: "Contact Lists",
