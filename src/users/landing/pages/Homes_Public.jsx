@@ -17,7 +17,7 @@ function StaySuite_Homes_Public() {
             </div>
         );
     }
-    
+
     if (error) return <p>Error loading rooms: {error}</p>;
 
     return (
@@ -25,7 +25,7 @@ function StaySuite_Homes_Public() {
             <div className="grid xs:grid-cols-2 lg:grid-cols-4 gap-6">
                 {rooms.length > 0 ? (
                     rooms.map((room) => (
-                        <Link to="/homes/room" key={room._id} className="space-y-3">
+                        <Link to={`/homes/room/${room._id}`} key={room._id} className="space-y-3">
                             <div className="rounded-lg overflow-hidden select-none">
                                 <img
                                     src={room.room_details[0]?.room_images[0]?.media_files[0]?.file_url || ""}

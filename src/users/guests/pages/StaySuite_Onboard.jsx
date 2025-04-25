@@ -36,7 +36,7 @@ function StaySuite_User_Onboard() {
             <div className="grid xs:grid-cols-2 lg:grid-cols-4 gap-6">
                 {rooms.length > 0 ? (
                     rooms.map((room) => (
-                        <Link to="/user/onboard/room" key={room._id} className="space-y-3">
+                        <Link to={`/user/onboard/room/${room._id}`} key={room._id} className="space-y-3">
                             <div className="rounded-lg overflow-hidden select-none">
                                 <img
                                     src={room.room_details[0]?.room_images[0]?.media_files[0]?.file_url || ""}
