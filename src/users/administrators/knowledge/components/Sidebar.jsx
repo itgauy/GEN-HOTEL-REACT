@@ -19,6 +19,7 @@ import {
   SidebarGroupContent,
 } from "@/components/ui/sidebar";
 import { NavUser } from "./Sidebar_UserDialog";
+import { Link } from "react-router-dom";
 
 // This is sample data.
 const data = {
@@ -30,22 +31,22 @@ const data = {
   navMain: [
     {
       title: "Overview",
-      url: "#",
+      url: "/kms-admin",
       icon: Home,
     },
     {
       title: "Content Management",
-      url: "#",
+      url: "/kms-admin/cms-portal",
       icon: FileText,
     },
     {
       title: "Articles",
-      url: "#",
+      url: "/kms-admin/article-management",
       icon: Activity,
     },
     {
       title: "Contact Lists",
-      url: "#",
+      url: "/kms-admin/contact-list",
       icon: LayoutDashboard,
     },
   ],
@@ -79,10 +80,10 @@ export function AppSidebar(props) {
                 {data.navMain.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
-                      <a href={item.url}>
+                      <Link to={item.url}>
                         <item.icon className="mr-1" />
                         <span>{item.title}</span>
-                      </a>
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}

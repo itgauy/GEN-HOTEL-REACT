@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import Cardboard from "../components/Cardboard";
+
 function Knowledge_Page() {
     return (
         <section id="welcome-page" className="p-8">
