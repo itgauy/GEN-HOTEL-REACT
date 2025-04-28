@@ -51,7 +51,6 @@ function Hotel_Services_Contacts() {
         }
     ]
 
-
     // Search Filter
     const filteredContacts = contacts
         .slice()
@@ -65,7 +64,6 @@ function Hotel_Services_Contacts() {
                 message.toLowerCase().includes(query)
             )
         })
-
 
     // View Modal
     const handleViewContact = (contact) => {
@@ -163,7 +161,6 @@ function Hotel_Services_Contacts() {
                 {/* Headings / Subheadings */}
                 <div>
                     <h1 className="text-2xl font-semibold">Contact Inquiries</h1>
-                    {/* {contact.length} */}
                     <p>{contacts.length} total inquiry{contacts.length > 1 && "ies"}</p>
                 </div>
                 {/* Search Bar */}
