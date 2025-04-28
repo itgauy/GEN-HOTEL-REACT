@@ -38,7 +38,7 @@
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
- 
+
   .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
@@ -74,7 +74,7 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
- 
+
 @layer base {
   * {
     @apply border-border;
@@ -83,7 +83,6 @@
     @apply font-sans antialiased bg-background text-foreground;
   }
 }
-
 
 /* Hides the default date picker icon in Chrome, Edge, Safari */
 input[type="date"].date-input::-webkit-calendar-picker-indicator {
@@ -149,12 +148,11 @@ input[type="date"].date-inputs {
   scrollbar-color: hsl(var(--border));
 }
 
-
 /* Add this to your existing global styles */
 
 .password-input {
   -webkit-text-security: disc;
-   /* text-security: disc; */
+  /* text-security: disc; */
 }
 
 /* Hide password reveal button in Edge */
@@ -178,5 +176,98 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* --------------- KMS: Sweet Alerts' styles ---------------  */
+/* Popup container */
+.swal-popup-sm {
+  @apply rounded-2xl w-full max-w-sm bg-white;
+}
+.swal-popup-md {
+  @apply rounded-2xl w-full max-w-md bg-white;
+}
+.swal-popup-lg {
+  @apply rounded-2xl w-full max-w-lg bg-white;
+}
+.swal-popup-xl {
+  @apply rounded-2xl w-full max-w-xl bg-white;
+}
+.swal-popup-5xl {
+  @apply rounded-2xl w-full max-w-5xl bg-white;
+}
+
+/* Title styling */
+.swal-title {
+  @apply text-neutral-800 font-bold text-2xl;
+}
+
+/* Text styling */
+.swal-text {
+  @apply text-neutral-600;
+}
+
+/* Confirm button styling */
+.swal-confirm {
+  @apply px-3 py-1.5 rounded-[9px] bg-neutral-800 text-white cursor-pointer;
+}
+
+/* Cancel button styling */
+.swal-cancel {
+  @apply px-3 py-1.5 rounded-[9px] bg-neutral-100 text-neutral-950 cursor-pointer;
+}
+
+/* Success button styling */
+.swal-success {
+  @apply px-3 py-1.5 rounded-[9px] bg-green-500 text-white cursor-pointer;
+}
+
+/* Info button styling */
+.swal-info {
+  @apply px-3 py-1.5 rounded-[9px] bg-blue-500 text-white cursor-pointer;
+}
+
+/* Danger button styling */
+.swal-danger {
+  @apply px-3 py-1.5 rounded-[9px] bg-red-500 text-white cursor-pointer;
+}
+
+/* Swal Input */
+.swal-input {
+  @apply px-3 py-1.5 border border-neutral-300/60 bg-neutral-100/60 rounded-lg focus:ring-2 ring-offset-1 focus:ring-neutral-800 focus:outline-none text-neutral-950 transition duration-300 ease-in-out;
+}
+
+/* Swal Textarea */
+.swal-textarea {
+  @apply px-3 py-1.5 border border-neutral-300/60 bg-neutral-100/60 rounded-lg focus:ring-2 ring-offset-1 focus:ring-neutral-800 focus:outline-none text-neutral-950 transition duration-300 ease-in-out resize-none w-full min-h-[120px];
+}
+
+.swal-fade-in {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.swal-fade-out {
+  animation: fadeOut 0.2s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
   }
 }
