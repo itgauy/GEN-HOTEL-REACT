@@ -23,6 +23,7 @@ const useLoginAuth = create(
   persist(
     (set, get) => ({
       user: null,
+      loading: false,
       refreshToken: getCookie('refresh_token'),
       isAuthenticated: !!getCookie('refresh_token'),
 
@@ -30,26 +31,25 @@ const useLoginAuth = create(
         try {
           // Step 1: Authenticate
           await axios.post(`${API_BASE}/login`, credentials);
-      
+
           // Step 2: Get all sessions
           const sessions = (await axios.get(`${API_BASE}/sessions`)).data;
-      
-          // Step 3: Determine the identifier used
+
+          // Step 3: Determine identifier used
           const identifierKey = credentials.email_address ? 'email_address' : 'username';
           const identifierValue = credentials[identifierKey];
-      
-          // Step 4: Find the correct session based on 'issued_by'
+
+          // Step 4: Find matching session
           const session = sessions.find(
             (s) => s.issued_by?.[identifierKey]?.toLowerCase() === identifierValue.toLowerCase()
           );
-      
+
           if (session?.refresh_token && session?.issued_by) {
             const { refresh_token, issued_by } = session;
-      
+
             // Save token in cookies
             setCookie('refresh_token', refresh_token, 7);
-      
-            // Normalize and persist to Zustand
+
             set({
               isAuthenticated: true,
               refreshToken: refresh_token,
@@ -68,13 +68,43 @@ const useLoginAuth = create(
           set({ isAuthenticated: false, refreshToken: null, user: null });
           throw error;
         }
-      },      
+      },
 
       logout: () => {
         deleteCookie('refresh_token');
         set({ isAuthenticated: false, refreshToken: null, user: null });
         localStorage.removeItem('auth-storage');
-      },      
+      },
+
+      // This should be use everytime if there is PUT request to update data.
+      revalidateUser: async () => {
+        // set({ loading: true, error: null });
+
+        try {
+          const { refreshToken, user } = get();
+          if (!refreshToken || !user) return;
+
+          const identifierKey = user.email_address ? 'email_address' : 'username';
+          const sessions = (await axios.get(`${API_BASE}/sessions`)).data;
+
+          const session = sessions.find(
+            (s) => s.issued_by?.[identifierKey]?.toLowerCase() === user[identifierKey].toLowerCase()
+          );
+
+          if (session?.issued_by) {
+            set({
+              user: {
+                ...session.issued_by,
+                employee_role: Array.isArray(session.issued_by.employee_role)
+                  ? session.issued_by.employee_role
+                  : [session.issued_by.employee_role ?? ''],
+              },
+            });
+          }
+        } catch (error) {
+          console.error('Revalidation failed:', error);
+        }
+      },
     }),
     {
       name: 'auth-storage',

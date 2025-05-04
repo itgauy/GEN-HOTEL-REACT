@@ -54,10 +54,12 @@ import {
 import { CircleMinus, CirclePlus } from "lucide-react";
 import useRoomStore from "../stores/rooms.stores";
 import { LoaderCircle } from "lucide-react";
+import useGuestReserveStore from "../stores/guest-reserve.store";
 
 function StaySuite_User_Room() {
   const { id } = useParams();
   const { selectedRoom, fetchRoomById, loading, error } = useRoomStore();
+  const { createReservation } = useGuestReserveStore();
 
   useEffect(() => {
     fetchRoomById(id);
@@ -75,6 +77,7 @@ function StaySuite_User_Room() {
     children: 0,
     infants: 0,
   });
+  const [reservationStatus, setReservationStatus] = useState(null);
 
   const firstDay = format(startOfMonth(today), "MMMM d");
   const lastDay = format(endOfMonth(today), "MMMM d");
@@ -91,13 +94,64 @@ function StaySuite_User_Room() {
     });
   };
 
+  // Handle reservation creation
+  const handleCreateReservation = async () => {
+    try {
+      // Get guest ID from localStorage
+      const authStorage = JSON.parse(localStorage.getItem('auth-storage'));
+      const guestId = authStorage?.state?.user?._id;
+  
+      if (!guestId || !checkInMain || !checkOutMain || !selectedRoom) {
+        setReservationStatus('Missing required information');
+        console.log('Missing required information:', {
+          guestId,
+          checkInMain,
+          checkOutMain,
+          selectedRoom
+        });
+        return;
+      }
+  
+      const nights = calculateNights();
+      const initialPricePerNight = selectedRoom.room_details[0]?.initial_price_per_night || 0;
+      const serviceFee = 20;
+      const initial_price_total = (initialPricePerNight * nights) + serviceFee;
+  
+      const reservationData = {
+        room_reservation: id,
+        guest_issued_by: guestId,
+        reservation_slot: {
+          adult: guests.adults,
+          children: guests.children,
+          infants: guests.infants,
+        },
+        check_in: new Date(checkInMain).toISOString(),
+        check_out: new Date(checkOutMain).toISOString(),
+        initial_price_total: Number(initial_price_total)
+      };
+  
+      console.log('Reservation Data to be sent:', reservationData);
+  
+      await createReservation(reservationData);
+      setReservationStatus('Reservation created successfully');
+      console.log('Reservation created successfully');
+    } catch (error) {
+      if (error.response?.status === 400 && error.response?.data?.message === "You have already reserved this room.") {
+        setReservationStatus('You have already reserved this room.');
+      } else {
+        setReservationStatus('Failed to create reservation');
+      }
+      console.log('Reservation creation failed:', error);
+    }
+  };
+
   const calculateNights = () => {
     if (checkInMain && checkOutMain) {
       const diffTime = checkOutMain.getTime() - checkInMain.getTime();
-      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1; // Add 1 to count both start and end days
-      return diffDays > 0 ? diffDays : 1; // Ensure at least 1 night
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+      return diffDays > 0 ? diffDays : 1;
     }
-    return 1; // Default to 1 night if dates are not fully selected
+    return 1;
   };
 
   // Helper to check if a time slot is in the selected range
@@ -123,10 +177,8 @@ function StaySuite_User_Room() {
     return <p>Error loading room: {error || "Room not found"}</p>;
   }
 
-
   // Mock time slots data
   const timeSlots = [
-    // 12:00 AM - 6:00 AM
     { time: "2025-03-24T00:00:00Z", available: false },
     { time: "2025-03-24T00:30:00Z", available: false },
     { time: "2025-03-24T01:00:00Z", available: true },
@@ -139,8 +191,6 @@ function StaySuite_User_Room() {
     { time: "2025-03-24T04:30:00Z", available: true },
     { time: "2025-03-24T05:00:00Z", available: true },
     { time: "2025-03-24T05:30:00Z", available: false },
-
-    // 6:00 AM - 12:00 PM
     { time: "2025-03-24T06:00:00Z", available: true },
     { time: "2025-03-24T06:30:00Z", available: true },
     { time: "2025-03-24T07:00:00Z", available: true },
@@ -153,8 +203,6 @@ function StaySuite_User_Room() {
     { time: "2025-03-24T10:30:00Z", available: false },
     { time: "2025-03-24T11:00:00Z", available: true },
     { time: "2025-03-24T11:30:00Z", available: true },
-
-    // 12:00 PM - 11:30 PM
     { time: "2025-03-24T12:00:00Z", available: false },
     { time: "2025-03-24T12:30:00Z", available: true },
     { time: "2025-03-24T13:00:00Z", available: true },
@@ -182,8 +230,6 @@ function StaySuite_User_Room() {
   ];
 
   return (
-    // Left Side Grid
-
     <section className="pt-28 pb-24 grid xs:grid-cols-1 lg:grid-cols-12 mx-auto lg:container gap-8">
       <section className="lg:col-span-8 flex flex-col items-start">
         <div className="w-full mb-4">
@@ -246,7 +292,7 @@ function StaySuite_User_Room() {
         <div className="mt-8 space-y-4">
           <div className="space-y-2">
             <span className="block font-semibold text-2xl mb-4">
-              0 nights in {selectedRoom.location.city}
+              {calculateNights()} nights in {selectedRoom.location.city}
             </span>
             <p className="text-gray-500">
               For this place, this is all booking reservations for this month of{" "}
@@ -254,45 +300,9 @@ function StaySuite_User_Room() {
             </p>
           </div>
           <div className="flex xs:flex-col lg:flex-row items-start lg:space-x-4 mt-8">
-            {/* Check In Calendar */}
-            {/* <Calendar
-              mode="range"
-              selected={checkInMain}
-              onSelect={(date) => {
-                if (date) {
-                  setCheckInMain(date);
-                  setCheckOutMain(null);
-                }
-              }}
-              className="rounded-md border border-slate-300 lg:w-[360px]"
-              day="lg:w-12 lg:h-10"
-              disabled={(date) => isBefore(date, today)}
-              classNames={{
-                day_disabled: "text-muted-foreground opacity-50 line-through",
-              }}
-            /> */}
-
-            {/* Check Out Calendar */}
-            {/* <Calendar
-                    mode="single"
-                    selected={checkOutMain}
-                    onSelect={(date) => {
-                        if (date && date > checkInMain) {
-                            setCheckOutMain(date);
-                        }
-                    }}
-                    disabled={(date) => date <= checkInMain}
-                    className="rounded-md border border-slate-300 lg:w-[360px]"
-                    day="lg:w-12 lg:h-10"
-                    classNames={{
-                        day_disabled: "text-muted-foreground opacity-50 line-through",
-                    }}
-                /> */}
           </div>
         </div>
       </section>
-
-      {/* Right Side Grid */}
 
       <section className="lg:col-span-4 lg:sticky lg:top-24 lg:self-start shadow-lg bg-white border rounded-xl p-6">
         <div className="w-full space-y-4">
@@ -302,8 +312,6 @@ function StaySuite_User_Room() {
             </span>
             <p className="text-lg">per night</p>
           </div>
-
-          {/* Dialog Trigger for Booking */}
 
           <Dialog>
             <DialogTrigger className="w-full text-left">
@@ -354,10 +362,8 @@ function StaySuite_User_Room() {
                     <p className="text-lg">Specify date.</p>
                   </div>
                   <div className="flex xs:flex-col lg:flex-row items-start lg:space-x-4 mb-4">
-                    {/* Check In Calendar */}
                     <div className="rounded-md border">
                       <div className="flex max-sm:flex-col">
-                        {/* Calendar Selection */}
                         <Calendar
                           mode="range"
                           selected={{ from: checkInMain, to: checkOutMain }}
@@ -376,8 +382,6 @@ function StaySuite_User_Room() {
                             day_disabled: "text-muted-foreground opacity-50 line-through",
                           }}
                         />
-
-                        {/* Time Slots Selection for Check In */}
                         <div className="relative w-full max-sm:h-48 sm:w-40">
                           <div className="absolute inset-0 py-4 max-sm:border-t">
                             <ScrollArea className="h-full sm:border-s">
@@ -429,8 +433,6 @@ function StaySuite_User_Room() {
                         </div>
                       </div>
                     </div>
-
-                    {/* Check Out Calendar */}
                   </div>
 
                   <div className="space-y-2 mb-4">
@@ -528,11 +530,31 @@ function StaySuite_User_Room() {
               </DialogDescription>
             </DialogContent>
           </Dialog>
-          <div id="reserve">
-            <Button size="lg" className="w-full select-none">
-              Reserve
-            </Button>
-          </div>
+          <Dialog>
+            <DialogTrigger className="w-full">
+              <Button 
+                size="lg" 
+                className="w-full select-none"
+                onClick={handleCreateReservation}
+              >
+                Reserve
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader className="space-y-2">
+                <DialogTitle className="text-xl">
+                  {reservationStatus || "Reservation Processing"}
+                </DialogTitle>
+                <DialogDescription className="text-base">
+                  {reservationStatus === 'Reservation created successfully'
+                    ? 'Check the Reservations Tab Overview inside the queueing.'
+                    : reservationStatus === 'You have already reserved this room.'
+                      ? 'You have already reserved this room. Please check your existing reservations or select a different room.'
+                      : 'Please verify all information and try again.'}
+                </DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
           <div id="calculation" className="space-y-3 select-none">
             <div
               id="row"
@@ -550,7 +572,7 @@ function StaySuite_User_Room() {
               className="w-full flex items-start flex-row justify-between"
             >
               <span className="underline cursor-pointer">Service fee</span>
-              <span>₱{100}</span>
+              <span>₱{20}</span>
             </div>
             <div className="py-2 border-slate-300 border-b w-full" />
             <div
@@ -558,7 +580,7 @@ function StaySuite_User_Room() {
               className="w-full flex items-start flex-row justify-between text-lg font-bold"
             >
               <span>Total</span>
-              <span>₱{(selectedRoom.room_details[0]?.initial_price_per_night * calculateNights() + 100).toLocaleString()}</span>
+              <span>₱{(selectedRoom.room_details[0]?.initial_price_per_night * calculateNights() + 20).toLocaleString()}</span>
             </div>
           </div>
         </div>

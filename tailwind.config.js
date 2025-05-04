@@ -13,7 +13,11 @@ module.exports = {
   			sans: [
   				'Outfit',
   				'sans-serif'
-  			]
+  			],
+			mono: [
+				'Geist Mono',
+				'monospace'
+			]
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
