@@ -7,14 +7,14 @@ import Hotel_Registration from '../pages/LastRegister';
 import SignUp from '../pages/Register';
 import OtpVerificationPage from '../pages/RegisterOTP';
 
-const AuthRoutes = () => [
+const AuthRoutes = () => (
   <Route path="/auth/login" element={<Outlet />}>
     <Route index element={<CheckAuth><StaySuite_Login /></CheckAuth>} />
-    <Route path="/auth/login/manager-check" element={<CheckAuth><Navigate /></CheckAuth>} />
-    <Route path="/auth/login/register" element={<CheckAuth><SignUp /></CheckAuth>} />
-    <Route path="/auth/login/register/verify" element={<RegisterAuth><OtpVerificationPage /></RegisterAuth>} />
-    <Route path="/auth/login/registration" element={<RegisterAuth><Hotel_Registration /></RegisterAuth>} />
+    <Route path="manager-check" element={<CheckAuth><Navigate /></CheckAuth>} />
+    <Route path="register" element={<CheckAuth><SignUp /></CheckAuth>} />
+    <Route path="register/verify" element={<RegisterAuth><OtpVerificationPage /></RegisterAuth>} />
+    <Route path="registration" element={<RegisterAuth><Hotel_Registration /></RegisterAuth>} />
   </Route>
-];
+);
 
 export default AuthRoutes;

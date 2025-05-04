@@ -34,13 +34,13 @@ function App() {
     <Router>
       <TitleUpdater />
       <Routes>
-        {...LandingRoutes()}
-        {...LoginRoutes()}
-        {...GuestUserRoute()}
-        {...RoomAdminRoutes()}
-        {...ReservationAdminRoutes()}
-        {...KnowledgeAdminRoutes()}
-        {...BookingAssistanceRoutes()}
+        {LandingRoutes()}
+        {LoginRoutes()}
+        {GuestUserRoute()}
+        {RoomAdminRoutes()}
+        {ReservationAdminRoutes()}
+        {KnowledgeAdminRoutes()}
+        {BookingAssistanceRoutes()}
       </Routes>
     </Router>
   );
