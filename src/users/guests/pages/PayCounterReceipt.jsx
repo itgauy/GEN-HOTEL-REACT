@@ -6,14 +6,14 @@ import useGuestBookStore from "../stores/guest-book.store";
 import { format } from "date-fns";
 
 function PayCounterReceipt() {
-  const { guestBook, loading, error, fetchGuestBook } = useGuestBookStore();
+  const { guestBook, loading, error, fetchGuestBookReceipt } = useGuestBookStore();
   const { id } = useParams();
 
   useEffect(() => {
     if (id) {
-      fetchGuestBook(id);
+      fetchGuestBookReceipt(id);
     }
-  }, [id, fetchGuestBook]);
+  }, [id, fetchGuestBookReceipt]);
 
   // Helper function to validate and format date
   const formatDate = (dateString, formatPattern) => {
