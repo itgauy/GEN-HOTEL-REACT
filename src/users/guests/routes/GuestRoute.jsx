@@ -9,6 +9,7 @@ import StaySuite_User_Blog_Article from '../pages/StaySuite_Blog_Article';
 import { CheckAuth, RequiredAuth } from '@/lib/Auth';
 import ProfilePage from '../pages/UserAccount';
 import PayCounterReceipt from '../pages/PayCounterReceipt';
+import BookingSuccess from '../pages/BookingResult';
 
 const GuestUserRoute = () => [
     <Route path="/user/onboard" element={<RequiredAuth><StaySuite_User /></RequiredAuth>}>
@@ -18,6 +19,7 @@ const GuestUserRoute = () => [
         <Route path="/user/onboard/blog/" element={<StaySuite_User_Blogs />} />
         <Route path="/user/onboard/bookings" element={<StaySuite_User_Booking_Reservation />} />
         <Route path="/user/onboard/blog/story" element={<StaySuite_User_Blog_Article />} />
+        <Route path="/user/onboard/bookings/result" element={<BookingSuccess />} />
         <Route path="/user/onboard/pay-counter/receipt/:id" element={<PayCounterReceipt />} /> 
         {/* Just pay attention to PayCounterReceipt */}
     </Route>

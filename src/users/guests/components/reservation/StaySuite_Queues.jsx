@@ -65,7 +65,7 @@ import useGuestBookStore from "../../stores/guest-book.store";
 
 function StaySuite_User_Booking_Queues() {
   const { reservations, loading, error, fetchReservationsId, updateReservation, deleteReservation, createReservation, revalidateReservations } = useGuestReserveStore();
-  const { createGuestBook, guestBook } = useGuestBookStore();
+  const { createGuestBook, guestBook, fetchGuestBook } = useGuestBookStore();
   const navigate = useNavigate();
   const today = startOfDay(new Date());
   const [checkInMain, setCheckInMain] = useState({
@@ -112,11 +112,6 @@ function StaySuite_User_Booking_Queues() {
 
   // Fetch and revalidate reservations on component mount
   useEffect(() => {
-    // Check and remove 'undefined' key from localStorage
-    if (localStorage.getItem("undefined") !== null) {
-      localStorage.removeItem("undefined");
-    }
-    
     if (userId) {
       fetchReservationsId(userId).then(() => {
         revalidateReservations(); // Revalidate after initial fetch
@@ -224,7 +219,7 @@ function StaySuite_User_Booking_Queues() {
       setLastName("");
       setSuffix("");
       console.log("Guest book entry created successfully with payload:", newGuestBook);
-      navigate(`/user/onboard/pay-counter/receipt/${userId}`);
+      navigate(`/user/onboard/bookings/result`);
     } catch (err) {
       console.error("Error during guest book creation:", err);
       alert("Failed to create guest book entry.");

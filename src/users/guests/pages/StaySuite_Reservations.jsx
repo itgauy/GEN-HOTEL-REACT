@@ -76,9 +76,6 @@ function StaySuite_User_Booking_Reservation() {
           >
             <PanelsTopLeftIcon className="-ms-0.5 me-1.5 opacity-60" size={16} aria-hidden="true" />
             Booking
-            <Badge className="bg-primary/15 ms-1.5 px-1.5 rounded-full" variant="secondary">
-              2
-            </Badge>
           </TabsTrigger>
           
           {/* <TabsTrigger

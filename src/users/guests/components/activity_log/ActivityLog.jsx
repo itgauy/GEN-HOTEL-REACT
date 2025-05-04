@@ -1,51 +1,52 @@
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { MoreHorizontal } from 'lucide-react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from '@/components/ui/dialog'; // Import Dialog components
+import { format } from 'date-fns';
+import useGuestBookStore from '../../stores/guest-book.store';
 
 const ActivityLogs = () => {
-  // Sample data for activity logs
-  const logs = [
-    {
-      date: 'December 16, 2024',
-      title: 'You booked a hotel room.',
-      description: 'Enjoy the luxury experiences.',
-      visibility: 'Private',
-      time: '3:43PM',
-    },
-    {
-      date: 'December 16, 2024',
-      title: 'You booked a hotel room.',
-      description: 'Enjoy the luxury experiences.',
-      visibility: 'Private',
-      time: '3:43PM',
-    },
-    {
-      date: 'December 16, 2024',
-      title: 'You booked a hotel room.',
-      description: 'Enjoy the luxury experiences.',
-      visibility: 'Private',
-      time: '3:43PM',
-    },
-  ];
+  const { activityLogs, fetchActivityLogs, loading, error } = useGuestBookStore();
+  const [userId, setUserId] = useState(null);
 
-  // State to manage the dialog's open/close status and the selected log
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedLog, setSelectedLog] = useState(null);
+  // Fetch user ID from localStorage and trigger fetchActivityLogs
+  useEffect(() => {
+    try {
+      const authStorage = localStorage.getItem('auth-storage');
+      console.log('auth-storage:', authStorage); // Debug: Log raw localStorage data
+      if (authStorage) {
+        const parsedData = JSON.parse(authStorage);
+        console.log('Parsed auth-storage:', parsedData); // Debug: Log parsed data
+        const id = parsedData.state.user._id;
+        console.log('Extracted userId:', id); // Debug: Log extracted userId
+        if (id) {
+          setUserId(id);
+          fetchActivityLogs(id); // Fetch activity logs for this user
+        }
+      }
+    } catch (err) {
+      console.error('Error parsing auth-storage:', err); // Already present
+    }
+  }, [fetchActivityLogs]);
 
-  // Function to handle "View" button click
-  const handleViewClick = (log) => {
-    setSelectedLog(log);
-    setIsDialogOpen(true);
+  // Debug: Log activityLogs and error whenever they change
+  useEffect(() => {
+    console.log('activityLogs:', activityLogs); // Debug: Log activityLogs state
+    console.log('error:', error); // Debug: Log error state
+  }, [activityLogs, error]);
+
+  // Format timestamp for date and time
+  const formatDate = (timestamp) => {
+    if (!timestamp) {
+      console.warn('Invalid timestamp:', timestamp); // Debug: Log invalid timestamp
+      return { date: 'Invalid Date', time: '' };
+    }
+    const dateObj = new Date(timestamp);
+    const formatted = {
+      date: format(dateObj, 'MMMM d, yyyy'),
+      time: format(dateObj, 'h:mm a'),
+    };
+    console.log('Formatted date for timestamp', timestamp, ':', formatted); // Debug: Log formatted date
+    return formatted;
   };
 
   return (
@@ -55,85 +56,47 @@ const ActivityLogs = () => {
 
       {/* Logs List */}
       <div className="space-y-4">
-        {logs.map((log, index) => (
-          <Card key={index} className="border rounded-lg shadow-sm">
-            <CardContent className="p-4 flex items-start space-x-4">
-              {/* Avatar */}
-              <Avatar className="w-10 h-10">
-                <AvatarImage src="https://via.placeholder.com/40" alt="User avatar" />
-                <AvatarFallback>KO</AvatarFallback>
-              </Avatar>
+        {loading && <p>Loading activity logs...</p>}
+        {error && <p className="text-red-500">{error}</p>}
+        {!loading && !error && (!activityLogs || activityLogs.length === 0) && (
+          <p className="text-gray-500 text-center">No activity logs found.</p>
+        )}
+        {!loading && !error && activityLogs && activityLogs.length > 0 && (
+          activityLogs.map((log, index) => {
+            const { date, time } = formatDate(log.action_timestamp);
+            console.log('Rendering log:', log); // Debug: Log each log being rendered
+            return (
+              <Card key={log._id || index} className="border rounded-lg shadow-sm">
+                <CardContent className="p-4 flex items-start space-x-4">
+                  {/* Avatar */}
+                  <Avatar className="w-10 h-10">
+                    <AvatarImage
+                      src="https://github.com/golash0000.png"
+                      alt="User avatar"
+                    />
+                    <AvatarFallback>
+                      {log.issued_by?.guest_name?.firstName?.[0] || 'U'}
+                      {log.issued_by?.guest_name?.lastName?.[0] || 'N'}
+                    </AvatarFallback>
+                  </Avatar>
 
-              {/* Log Details */}
-              <div className="flex-1">
-                <p className="text-sm text-gray-500">{log.date}</p>
-                <h2 className="text-base font-medium">{log.title}</h2>
-                <p className="text-sm text-gray-600">{log.description}</p>
-                <div className="flex items-center space-x-2 text-sm text-gray-500">
-                  <span className="inline-flex items-center">
-                    <span className="w-2 h-2 bg-gray-400 rounded-full mr-1"></span>
-                    {log.visibility}
-                  </span>
-                </div>
-              </div>
+                  {/* Log Details */}
+                  <div className="flex-1">
+                    <p className="text-sm text-gray-500">{date}</p>
+                    <h2 className="text-base font-medium">{log.action || 'Unknown Action'}</h2>
+                    <p className="text-sm text-gray-600">{log.action_description || 'No description'}</p>
+                  </div>
 
-              {/* Actions */}
-              <div className="flex items-center space-x-2">
-                <p className="text-sm text-gray-500">{log.time}</p>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleViewClick(log)}
-                >
-                  View
-                </Button>
-                <Button variant="ghost" size="sm">
-                  <MoreHorizontal className="w-4 h-4" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+                  {/* Actions */}
+                  <div className="flex items-center space-x-2">
+                    <p className="text-sm text-gray-500">{time}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })
+        )}
       </div>
-
-      {/* Dialog for Full Details */}
-      {selectedLog && (
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Activity Log Details</DialogTitle>
-              <DialogDescription>
-                Full details of the selected activity log.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <span className="col-span-1 font-medium">Date:</span>
-                <span className="col-span-3">{selectedLog.date}</span>
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <span className="col-span-1 font-medium">Title:</span>
-                <span className="col-span-3">{selectedLog.title}</span>
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <span className="col-span-1 font-medium">Description:</span>
-                <span className="col-span-3">{selectedLog.description}</span>
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <span className="col-span-1 font-medium">Visibility:</span>
-                <span className="col-span-3">{selectedLog.visibility}</span>
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <span className="col-span-1 font-medium">Time:</span>
-                <span className="col-span-3">{selectedLog.time}</span>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button onClick={() => setIsDialogOpen(false)}>Close</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )}
     </div>
   );
 };
