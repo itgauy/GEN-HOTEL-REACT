@@ -74,6 +74,7 @@ import {
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
+import useGuestBookStore from "../../stores/guest-book.store";
 
 function StaySuite_User_Booking() {
   // State for the main calendar
@@ -93,76 +94,19 @@ function StaySuite_User_Booking() {
   const [timeCheckIn, setTimeCheckIn] = useState(null);
   const [timeCheckOut, setTimeCheckOut] = useState(null);
 
-  // Mock time slots data
-  const timeSlots = [
-    // 12:00 AM - 6:00 AM
-    { time: "2025-03-24T00:00:00Z", available: false },
-    { time: "2025-03-24T00:30:00Z", available: false },
-    { time: "2025-03-24T01:00:00Z", available: true },
-    { time: "2025-03-24T01:30:00Z", available: true },
-    { time: "2025-03-24T02:00:00Z", available: true },
-    { time: "2025-03-24T02:30:00Z", available: true },
-    { time: "2025-03-24T03:00:00Z", available: false },
-    { time: "2025-03-24T03:30:00Z", available: true },
-    { time: "2025-03-24T04:00:00Z", available: true },
-    { time: "2025-03-24T04:30:00Z", available: true },
-    { time: "2025-03-24T05:00:00Z", available: true },
-    { time: "2025-03-24T05:30:00Z", available: false },
-
-    // 6:00 AM - 12:00 PM
-    { time: "2025-03-24T06:00:00Z", available: true },
-    { time: "2025-03-24T06:30:00Z", available: true },
-    { time: "2025-03-24T07:00:00Z", available: true },
-    { time: "2025-03-24T07:30:00Z", available: true },
-    { time: "2025-03-24T08:00:00Z", available: false },
-    { time: "2025-03-24T08:30:00Z", available: true },
-    { time: "2025-03-24T09:00:00Z", available: true },
-    { time: "2025-03-24T09:30:00Z", available: true },
-    { time: "2025-03-24T10:00:00Z", available: true },
-    { time: "2025-03-24T10:30:00Z", available: false },
-    { time: "2025-03-24T11:00:00Z", available: true },
-    { time: "2025-03-24T11:30:00Z", available: true },
-
-    // 12:00 PM - 11:30 PM
-    { time: "2025-03-24T12:00:00Z", available: false },
-    { time: "2025-03-24T12:30:00Z", available: true },
-    { time: "2025-03-24T13:00:00Z", available: true },
-    { time: "2025-03-24T13:30:00Z", available: true },
-    { time: "2025-03-24T14:00:00Z", available: true },
-    { time: "2025-03-24T14:30:00Z", available: false },
-    { time: "2025-03-24T15:00:00Z", available: true },
-    { time: "2025-03-24T15:30:00Z", available: true },
-    { time: "2025-03-24T16:00:00Z", available: true },
-    { time: "2025-03-24T16:30:00Z", available: true },
-    { time: "2025-03-24T17:00:00Z", available: true },
-    { time: "2025-03-24T17:30:00Z", available: true },
-    { time: "2025-03-24T18:00:00Z", available: true },
-    { time: "2025-03-24T18:30:00Z", available: true },
-    { time: "2025-03-24T19:00:00Z", available: true },
-    { time: "2025-03-24T19:30:00Z", available: false },
-    { time: "2025-03-24T20:00:00Z", available: true },
-    { time: "2025-03-24T20:30:00Z", available: true },
-    { time: "2025-03-24T21:00:00Z", available: true },
-    { time: "2025-03-24T21:30:00Z", available: true },
-    { time: "2025-03-24T22:00:00Z", available: true },
-    { time: "2025-03-24T22:30:00Z", available: false },
-    { time: "2025-03-24T23:00:00Z", available: true },
-    { time: "2025-03-24T23:30:00Z", available: true },
-  ];
-
   const items = [
-    {
-      id: "1",
-      date: "March 25, 2025 (09:34 AM, GMT +8)",
-      location: "San Francisco, US",
-      balance: "₱1,250.00",
-    },
-    {
-      id: "2",
-      date: "March 24, 2025 (12:38 PM, GMT +8)",
-      location: "San Francisco, US",
-      balance: "₱1,250.00",
-    },
+    // {
+    //   id: "1",
+    //   date: "March 25, 2025 (09:34 AM, GMT +8)",
+    //   location: "San Francisco, US",
+    //   balance: "₱1,250.00",
+    // },
+    // {
+    //   id: "2",
+    //   date: "March 24, 2025 (12:38 PM, GMT +8)",
+    //   location: "San Francisco, US",
+    //   balance: "₱1,250.00",
+    // },
   ];
 
   return (
@@ -180,9 +124,9 @@ function StaySuite_User_Booking() {
                 <Badge className="rounded-full">1 Pending</Badge>
               </div>
               <div className="flex flex-col w-full">
-                <ScrollArea className="h-[400px] border border-slate-200 rounded-xl p-2">
+                <ScrollArea className="h-[400px] border border-slate-200 bg-gray-100 rounded-xl p-2">
                   <div className="grid grid-cols-1 gap-4">
-                    <div className="border border-slate-300 p-3 rounded-xl flex flex-row items-start w-full">
+                    <div className="border bg-white border-slate-300 p-3 rounded-xl flex flex-row items-start w-full">
                       <div className="rounded-xl overflow-hidden select-none">
                         <Link to="">
                           <img
@@ -222,28 +166,14 @@ function StaySuite_User_Booking() {
                                           <span className="block font-semibold text-lg">
                                             Adults
                                           </span>
-                                          <p>Age 13+</p>
+                                          <p>Age 20+</p>
                                         </div>
                                         <div className="flex items-center space-x-4">
-                                          <Button
-                                            variant="outline"
-                                            size="icon"
-                                            id="subtract"
-                                            disabled
-                                          >
-                                            <CircleMinus />
-                                          </Button>
-                                          <div id="count" className="text-lg">
+                                      
+                                          <div id="count" className="text-lg px-2.5">
                                             1
                                           </div>
-                                          <Button
-                                            variant="outline"
-                                            size="icon"
-                                            id="add"
-                                            disabled
-                                          >
-                                            <CirclePlus />
-                                          </Button>
+                                         
                                         </div>
                                       </div>
                                       <div className="flex flex-row items-center justify-between border rounded-lg border-slate-400 p-4">
@@ -254,25 +184,11 @@ function StaySuite_User_Booking() {
                                           <p>Age 2-12</p>
                                         </div>
                                         <div className="flex items-center space-x-4">
-                                          <Button
-                                            variant="outline"
-                                            size="icon"
-                                            id="subtract"
-                                            disabled
-                                          >
-                                            <CircleMinus />
-                                          </Button>
-                                          <div id="count" className="text-lg">
+                                      
+                                          <div id="count" className="text-lg px-2.5">
                                             1
                                           </div>
-                                          <Button
-                                            variant="outline"
-                                            size="icon"
-                                            id="add"
-                                            disabled
-                                          >
-                                            <CirclePlus />
-                                          </Button>
+                                          
                                         </div>
                                       </div>
                                       <div className="flex flex-row items-center justify-between border rounded-lg border-slate-400 p-4">
@@ -283,25 +199,11 @@ function StaySuite_User_Booking() {
                                           <p>Under 2</p>
                                         </div>
                                         <div className="flex items-center space-x-4">
-                                          <Button
-                                            variant="outline"
-                                            size="icon"
-                                            id="subtract"
-                                            disabled
-                                          >
-                                            <CircleMinus />
-                                          </Button>
-                                          <div id="count" className="text-lg">
+                                      
+                                          <div id="count" className="text-lg px-2.5">
                                             1
                                           </div>
-                                          <Button
-                                            variant="outline"
-                                            size="icon"
-                                            id="add"
-                                            disabled
-                                          >
-                                            <CirclePlus />
-                                          </Button>
+                                          
                                         </div>
                                       </div>
                                     </div>

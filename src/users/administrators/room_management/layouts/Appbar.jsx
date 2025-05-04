@@ -3,6 +3,7 @@ import { Link, Outlet } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "../components/Sidebar";
 import { Separator } from "@/components/ui/separator"
+import { Toaster } from "@/components/ui/toaster";
 
 function Room_Management_Appbar({ children }) {
     return (
@@ -15,8 +16,9 @@ function Room_Management_Appbar({ children }) {
                         orientation="vertical"
                         className="mx-2 data-[orientation=vertical]:h-4"
                     />
-                    <h1 className="text-base font-medium">Welcome Page!</h1>
+                    <h1 className="text-base font-medium">Hotel Rooms and Condominiums Data Management</h1>
                 </div>
+                <Toaster />
                 <Outlet />
             </main>
         </SidebarProvider>

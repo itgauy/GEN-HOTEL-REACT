@@ -21,6 +21,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { NavUser } from "./Sidebar_UserDialog";
+import { Link } from "react-router-dom"
 
 // This is sample data.
 const data = {
@@ -36,7 +37,7 @@ const data = {
       items: [
         {
           title: "Room / Condominiums",
-          url: "#",
+          url: "/room-admin/room-data",
         },
       ],
     },
@@ -46,10 +47,14 @@ const data = {
       items: [
         {
           title: "Overview",
-          url: "#",
+          url: "/room-admin/overview",
         },
         {
           title: "Maintenance",
+          url: "#",
+        },
+        {
+          title: "Inventory",
           url: "#",
         },
         {
@@ -72,12 +77,12 @@ export function AppSidebar(props) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <a href="#">
+              <a href="/room-admin">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                   <GalleryVerticalEnd className="size-4" />
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold">Room Management (Admin)</span>
+                  <span className="font-semibold">Room Management</span>
                   <span className="text-xs">Handle entire room data.</span>
                 </div>
               </a>
@@ -112,7 +117,7 @@ export function AppSidebar(props) {
                               asChild
                               isActive={item.isActive}
                             >
-                              <a href={item.url}>{item.title}</a>
+                              <Link to={item.url}>{item.title}</Link>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                         ))}

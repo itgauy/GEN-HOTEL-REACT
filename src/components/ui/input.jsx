@@ -16,4 +16,17 @@ const Input = React.forwardRef(({ className, type, ...props }, ref) => {
 })
 Input.displayName = "Input"
 
-export { Input }
+const InputWithIcon = React.forwardRef(({ className, leftIcon, rightIcon, ...props }, ref) => {
+  return (
+    <div className="relative">
+      {leftIcon && <div className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground">{leftIcon}</div>}
+      <Input className={cn(leftIcon && "pl-9", rightIcon && "pr-9", className)} ref={ref} {...props} />
+      {rightIcon && <div className="absolute right-2.5 top-1/2 -translate-y-1/2 text-green-500">{rightIcon}</div>}
+    </div>
+  )
+})
+InputWithIcon.displayName = "InputWithIcon"
+
+export { Input, InputWithIcon }
+
+
