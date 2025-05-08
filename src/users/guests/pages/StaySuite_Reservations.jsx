@@ -77,18 +77,7 @@ function StaySuite_User_Booking_Reservation() {
             <PanelsTopLeftIcon className="-ms-0.5 me-1.5 opacity-60" size={16} aria-hidden="true" />
             Booking
           </TabsTrigger>
-          
-          {/* <TabsTrigger
-            value="tab-3"
-            className="hover:bg-accent hover:text-foreground data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative after:absolute after:inset-x-0 after:bottom-0 after:-mb-1 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-          >
-            <UsersRoundIcon className="-ms-0.5 me-1.5 opacity-60" size={16} aria-hidden="true" />
-            Assistance
-            <Badge className="bg-primary/15 ms-1.5 px-1.5 rounded-full" variant="secondary">
-              3
-            </Badge>
-          </TabsTrigger> */}
-
+        
           <TabsTrigger
             value="tab-4"
             className="hover:bg-accent hover:text-foreground data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative after:absolute after:inset-x-0 after:bottom-0 after:-mb-1 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"

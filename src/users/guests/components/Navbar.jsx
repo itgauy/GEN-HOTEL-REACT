@@ -152,10 +152,10 @@ export function Navbar_User({ className, ...props }) {
                     <User className="mr-2 h-4 w-4" />
                     <span>Profile</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
+                  {/* <DropdownMenuItem>
                     <CreditCard className="mr-2 h-4 w-4" />
                     <span>Billing</span>
-                  </DropdownMenuItem>
+                  </DropdownMenuItem> */}
                   <DropdownMenuSeparator />
                   <AlertDialogTrigger className="w-full">
                     <DropdownMenuItem>

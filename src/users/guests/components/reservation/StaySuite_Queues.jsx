@@ -9,6 +9,7 @@ import {
   CirclePlus,
   Trash,
   UsersRoundIcon,
+  LoaderCircle
 } from "lucide-react";
 import { Calendar as CalendarUI } from "@/components/ui/calendar";
 import { Calendar as CalendarIcon } from "lucide-react";
@@ -78,6 +79,7 @@ function StaySuite_User_Booking_Queues() {
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
   const [editingReservationId, setEditingReservationId] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false); // To handle multiple dialogs
   const [guestCounts, setGuestCounts] = useState({
     adult: 0,
     children: 0,
@@ -175,56 +177,62 @@ function StaySuite_User_Booking_Queues() {
     }
   };
 
-  // Handle form submission for creating a new guest book entry
   const handleCreateReservation = async () => {
-    if (!firstName || !lastName) {
-      alert("Please provide first name and last name.");
-      return;
-    }
-    if (reservations.length === 0) {
-      alert("No reservations to submit.");
-      return;
-    }
-
-    const reservationRoomIds = reservations
-    .map(reservation => reservation.room_reservation?._id)
-    .filter(id => id); 
-
-    if (reservationRoomIds.length === 0) {
-      alert("No valid room reservations found.");
-      return;
-    }
-
-    const newGuestBook = {
-      reservation_room: reservationRoomIds,
-      booking_issued_by: userId,
-      contact_information: {
-        email_address: emailAddress,
-        contact_first_name: firstName,
-        contact_last_name: lastName,
-        ...(suffix && { contact_suffix: suffix }),
-      },
-      mode_of_payment: "Pay thru Counter",
-      receipt_record: {
-        order_reservation_total: orderReservationTotal,
-      },
-    };
-
-    console.log("Form Submission Payload:", JSON.stringify(newGuestBook, null, 2));
-
+    setIsSubmitting(true); // Start spinner
+  
     try {
+      if (!firstName || !lastName) {
+        alert("Please provide first name and last name.");
+        return;
+      }
+  
+      if (reservations.length === 0) {
+        alert("No reservations to submit.");
+        return;
+      }
+  
+      const reservationRoomIds = reservations
+        .map((reservation) => reservation.room_reservation?._id)
+        .filter((id) => id);
+  
+      if (reservationRoomIds.length === 0) {
+        alert("No valid room reservations found.");
+        return;
+      }
+  
+      const newGuestBook = {
+        reservation_room: reservationRoomIds,
+        booking_issued_by: userId,
+        contact_information: {
+          email_address: emailAddress,
+          contact_first_name: firstName,
+          contact_last_name: lastName,
+          ...(suffix && { contact_suffix: suffix }),
+        },
+        mode_of_payment: "Pay thru Counter",
+        receipt_record: {
+          order_reservation_total: orderReservationTotal,
+        },
+      };
+  
+      console.log("Form Submission Payload:", JSON.stringify(newGuestBook, null, 2));
+  
       await createGuestBook(newGuestBook);
+  
       alert("Guest book entry created successfully!");
       setFirstName("");
       setLastName("");
       setSuffix("");
       console.log("Guest book entry created successfully with payload:", newGuestBook);
-      navigate(`/user/onboard/bookings/result`);
+  
+      window.location.href = "/user/onboard/bookings/result";
     } catch (err) {
       console.error("Error during guest book creation:", err);
       alert("Failed to create guest book entry.");
+    } finally {
+      setIsSubmitting(false); // Ensure this always runs
     }
-  };
+  };  
 
   // Handle deletion of reservation
   const handleDeleteReservation = async (reservationId) => {
@@ -287,6 +295,14 @@ function StaySuite_User_Booking_Queues() {
     { time: "2025-03-24T23:00:00Z", available: true },
     { time: "2025-03-24T23:30:00Z", available: true },
   ];
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center w-full py-8">
+        <LoaderCircle className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   return (
     <section className="pb-24 grid xs:grid-cols-1 lg:grid-cols-12 mx-auto lg:container gap-6">
@@ -714,20 +730,26 @@ function StaySuite_User_Booking_Queues() {
 
               <AlertDialog>
                 <AlertDialogTrigger className="w-full">
-                  <Button className="w-full">
-                    Proceed
-                  </Button>
+                  <Button className="w-full">Proceed</Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle className="text-2xl">Confirm Action</AlertDialogTitle>
                     <AlertDialogDescription className="text-base">
-                      This action cannot be undone. This will proceed to initially mark as booking reservation
+                      This action cannot be undone. This will proceed to initially mark as booking reservation.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleCreateReservation}>Continue</AlertDialogAction>
+                    {isSubmitting ? (
+                      <div className="w-full flex justify-center py-2">
+                        <LoaderCircle className="h-5 w-5 animate-spin text-muted-foreground" />
+                      </div>
+                    ) : (
+                      <>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleCreateReservation}>Continue</AlertDialogAction>
+                      </>
+                    )}
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>

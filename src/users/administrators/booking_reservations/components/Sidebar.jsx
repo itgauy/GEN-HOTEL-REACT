@@ -29,20 +29,15 @@ const data = {
   },
   navMain: [
     {
-      title: "Payments",
-      url: "#",
+      title: "Reservations",
+      url: "/reservations-admin/bookings",
       icon: FileText,
     },
     {
-      title: "Title 3",
-      url: "#",
+      title: "Analytics",
+      url: "/reservations-admin/analytics",
       icon: Activity,
-    },
-    {
-      title: "Title 4",
-      url: "#",
-      icon: LayoutDashboard,
-    },
+    }
   ],
 };
 
