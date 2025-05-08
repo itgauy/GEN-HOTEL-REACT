@@ -32,7 +32,15 @@ export default function ProfilePage() {
     error,
     resetStatus,
   } = useGuestUpdateStore()
-  const { user, revalidateUser } = useLoginAuth()
+  const { user, revalidateUser, loading } = useLoginAuth()
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center w-full py-8">
+        <LoaderCircle className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   useEffect(() => {
     async function syncUserData() {
@@ -66,15 +74,6 @@ export default function ProfilePage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Log the data being sent for debugging
-    // console.log("Data being sent to the server:", {
-    //   ...formData,
-    //   firstName: fullName.firstName, // Directly include firstName
-    //   lastName: fullName.lastName, // Directly include lastName
-    //   username: formData.username, // Log username
-    //   email_address: formData.email_address, // Log email_address
-    // });
-    
     try {
       await updateGuestUser({
         ...formData,
@@ -89,9 +88,6 @@ export default function ProfilePage() {
       } else if (activeTab === "edit-profile") {
         setShowSuccessIcon(true);
       }
-      
-      // // Log the response for further debugging (if any)
-      // console.log("Profile update response:", success);
       
       toast({
         title: "Updated Successfully!",
@@ -109,30 +105,6 @@ export default function ProfilePage() {
     }
   };
     
-  
-
-  // For paypal pero wala paaa din
-
-  const { requestPaypalAuth } = usePaypalOAuthStore()
-  const navigate = useNavigate() // This have not yet 
-
-  const handlePayPalOAuth = async () => {
-    const guestId = JSON.parse(localStorage.getItem("auth-storage"))?._id
-    if (!guestId) {
-      alert("No user ID found in localStorage.")
-      return
-    }
-
-    const refreshTokenInput = prompt("Paste your PayPal refresh token here:")
-    if (!refreshTokenInput) return
-
-    await requestPaypalAuth({
-      guest_id: guestId,
-      paypal_refresh_token: refreshTokenInput,
-    })
-
-    alert("PayPal authorization submitted. Check your dashboard.")
-  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background p-4">
@@ -312,7 +284,7 @@ export default function ProfilePage() {
                 </div>
 
                 {/* Contact Number */}
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <label htmlFor="bio" className="text-sm font-medium">
                     Contact Number
                   </label>
@@ -325,7 +297,7 @@ export default function ProfilePage() {
                     placeholder="Enter a phone number"
                     className="cursor-not-allowed"
                   />
-                </div>
+                </div> */}
 
                 {/* Submit Button */}
                 <div className="flex justify-end">

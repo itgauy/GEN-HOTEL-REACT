@@ -14,9 +14,9 @@ export function Navbar_Public({ className, ...props }) {
                     <Link to="/homes" className="text-sm font-medium hover:underline">
                         Homes
                     </Link>
-                    <Link to="/blog" className="text-sm font-medium hover:underline">
+                    {/* <Link to="/blog" className="text-sm font-medium hover:underline">
                         Blog
-                    </Link>
+                    </Link> */}
                     <Button asChild variant="default" className="rounded-md">
                         <Link to="/auth/login">Login</Link>
                     </Button>

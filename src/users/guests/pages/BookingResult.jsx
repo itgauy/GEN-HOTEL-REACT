@@ -1,10 +1,9 @@
-"use client"
-
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Hotel } from "lucide-react"
 import { motion } from "motion/react"
 import { useEffect, useState } from "react"
+import { Link } from "react-router-dom"
 
 // Confetti component
 const Confetti = ({ count = 100 }) => {
@@ -136,7 +135,9 @@ export default function BookingSuccess() {
               whileTap={{ scale: 0.95 }}
               className="w-full"
             >
-              <Button className="w-full">Explore</Button>
+              <Link to="/user/onboard/bookings">
+                <Button className="w-full">Proceed</Button>
+              </Link>
             </motion.div>
           </CardContent>
         </Card>

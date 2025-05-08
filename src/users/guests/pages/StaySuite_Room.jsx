@@ -318,7 +318,7 @@ function StaySuite_User_Room() {
               <div className="pt-12 border-slate-300 border-b w-full" />
             </div>
           </div>
-          <div className="mt-8 space-y-4">
+          {/* <div className="mt-8 space-y-4">
             <div className="space-y-2">
               <span className="block font-semibold text-2xl mb-4">
                 {calculateNights()} nights in {selectedRoom.location.city}
@@ -330,7 +330,7 @@ function StaySuite_User_Room() {
             </div>
             <div className="flex xs:flex-col lg:flex-row items-start lg:space-x-4 mt-8">
             </div>
-          </div>
+          </div> */}
         </section>
 
         <section className="lg:col-span-4 lg:sticky lg:top-24 lg:self-start shadow-lg bg-white border rounded-xl p-6">

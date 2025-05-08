@@ -244,7 +244,7 @@ function StaySuite_Rooms_Public() {
           </div>
         </div>
         <div className="mt-8 space-y-4">
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <span className="block font-semibold text-2xl mb-4">
               0 nights in {selectedRoom.location.city}
             </span>
@@ -252,7 +252,7 @@ function StaySuite_Rooms_Public() {
               For this place, this is all booking reservations for this month of{" "}
               {firstDay} to {lastDay}
             </p>
-          </div>
+          </div> */}
           <div className="flex xs:flex-col lg:flex-row items-start lg:space-x-4 mt-8">
             {/* Check In Calendar */}
             {/* <Calendar

@@ -6,6 +6,7 @@ import {
   CirclePlus,
   Download,
   Calendar as CalendarIcon,
+  LoaderCircle
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -98,6 +99,24 @@ function StaySuite_User_Booking() {
     return `${brgy}, ${city}, ${province}, ${postalcode}`;
   };
 
+  // Filter bookings for pendings (check-in and check-out dates are on or after today)
+  const pendings = guestBook?.filter((booking) => {
+    const checkInDate = new Date(booking.booking_date_added);
+    const checkOutDate = new Date(booking.receipt_record?.receipt_expiration);
+    return (
+      isValid(checkInDate) &&
+      isValid(checkOutDate) &&
+      checkInDate >= today &&
+      checkOutDate >= today
+    );
+  }) || [];
+
+  // Filter bookings for check-ins (check-out date is before today)
+  const checkIns = guestBook?.filter((booking) => {
+    const checkOutDate = new Date(booking.receipt_record?.receipt_expiration);
+    return isValid(checkOutDate) && checkOutDate < today;
+  }) || [];
+
   // Sample transaction items (unchanged)
   const items = [
     // {
@@ -114,6 +133,14 @@ function StaySuite_User_Booking() {
     // },
   ];
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center w-full py-8">
+        <LoaderCircle className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
   return (
     <section className="pb-24">
       <Tabs defaultValue="pendings">
@@ -127,19 +154,19 @@ function StaySuite_User_Booking() {
               <div className="flex items-center space-x-4">
                 <span className="font-bold text-2xl">Bookings</span>
                 <Badge className="rounded-full">
-                  {guestBook ? guestBook.length : 0} Pending
+                  {pendings.length} Pending
                 </Badge>
               </div>
               <div className="flex flex-col w-full">
                 <ScrollArea className="h-[400px] border border-slate-200 bg-gray-100 rounded-xl p-2">
                   {loading && <p>Loading bookings...</p>}
                   {error && <p className="text-red-500">{error}</p>}
-                  {!loading && !error && (!guestBook || guestBook.length === 0) && (
+                  {!loading && !error && pendings.length === 0 && (
                     <p>No pending bookings found.</p>
                   )}
-                  {!loading && !error && guestBook && (
+                  {!loading && !error && pendings.length > 0 && (
                     <div className="grid grid-cols-1 gap-4">
-                      {guestBook.map((booking) => {
+                      {pendings.map((booking) => {
                         const room = booking.reservation_room[0];
                         const roomDetails = room?.room_details[0];
                         const availability = roomDetails?.room_availability;
@@ -309,168 +336,146 @@ function StaySuite_User_Booking() {
             <section className="lg:col-span-7 flex flex-col items-start space-y-4">
               <div className="flex items-center space-x-4">
                 <span className="font-bold text-2xl">Check-Ins</span>
+                <Badge className="rounded-full">
+                  {checkIns.length} Completed
+                </Badge>
               </div>
               <div className="flex flex-col w-full">
-                <ScrollArea className="h-[400px] border border-slate-200 rounded-xl p-2">
-                  <div className="grid grid-cols-1 gap-4">
-                    <div className="border border-slate-300 p-3 rounded-xl flex flex-row items-start w-full">
-                      <div className="rounded-xl overflow-hidden select-none">
-                        <Link to="">
-                          <img
-                            src="https://qby900ozue.ufs.sh/f/k3CYx7aMjR9SRc9kNMsCiv4UJh150yGOZYWxesQwoIFAl8km"
-                            className="aspect-video object-cover w-[9.575rem] h-[9.575rem]"
-                            alt=""
-                          />
-                        </Link>
-                      </div>
-                      <div className="w-full px-4 flex flex-col space-y-2 relative">
-                        <div className="space-y-2">
-                          <div className="max-w-[300px] break-words">
-                            <Link to="">
-                              <span className="font-bold underline text-lg select-none line-clamp-1">
-                                Hotel Room
-                              </span>
-                            </Link>
-                            <p className="text-gray-500 text-sm">
-                              Location: Quezon City, NCR
-                            </p>
-                          </div>
-                          <div className="flex items-center space-x-2 select-none">
-                            <AlertDialog>
-                              <AlertDialogTrigger>
-                                <Button size="sm" variant="outline">
-                                  <Diff />
-                                  Guests: 10 (total)
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>Guests</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    <div className="grid grid-cols-1 gap-4 text-black">
-                                      <div className="flex flex-row items-center justify-between border rounded-lg border-slate-400 p-4">
-                                        <div className="">
-                                          <span className="block font-semibold text-lg">
-                                            Adults
-                                          </span>
-                                          <p>Age 13+</p>
-                                        </div>
-                                        <div className="flex items-center space-x-4">
-                                          <Button
-                                            variant="outline"
-                                            size="icon"
-                                            id="subtract"
-                                            disabled
-                                          >
-                                            <CircleMinus />
-                                          </Button>
-                                          <div id="count" className="text-lg">
-                                            1
+                <ScrollArea className="h-[400px] border border-slate-200 bg-gray-100 rounded-xl p-2">
+                  {loading && <p>Loading check-ins...</p>}
+                  {error && <p className="text-red-500">{error}</p>}
+                  {!loading && !error && checkIns.length === 0 && (
+                    <p>No completed check-ins found.</p>
+                  )}
+                  {!loading && !error && checkIns.length > 0 && (
+                    <div className="grid grid-cols-1 gap-4">
+                      {checkIns.map((booking) => {
+                        const room = booking.reservation_room[0];
+                        const roomDetails = room?.room_details[0];
+                        const availability = roomDetails?.room_availability;
+                        const totalGuests =
+                          (availability?.adults || 0) +
+                          (availability?.children || 0) +
+                          (availability?.infants || 0);
+
+                        return (
+                          <div
+                            key={booking._id}
+                            className="border bg-white border-slate-300 p-3 rounded-xl flex flex-row items-start w-full"
+                          >
+                            <div className="rounded-xl overflow-hidden select-none">
+                              <Link to={`/user/onboard/room/${booking._id}`}>
+                                <img
+                                  src={
+                                    roomDetails?.room_images?.[0]?.media_files?.[0]?.file_url ||
+                                    "https://qby900ozue.ufs.sh/f/k3CYx7aMjR9SRc9kNMsCiv4UJh150yGOZYWxesQwoIFAl8km"
+                                  }
+                                  className="aspect-video object-cover w-[9.575rem] h-[9.575rem]"
+                                  alt={roomDetails?.room_title || "Hotel Room"}
+                                />
+                              </Link>
+                            </div>
+                            <div className="w-full px-4 flex flex-col space-y-2 relative">
+                              <div className="space-y-2">
+                                <div className="max-w-[400px] break-words">
+                                  <Link to={`/user/onboard/room/${booking._id}`}>
+                                    <span className="font-bold underline text-lg select-none line-clamp-1">
+                                      {roomDetails?.room_title || "Hotel Room"}
+                                    </span>
+                                  </Link>
+                                  <p className="text-gray-500 text-sm">
+                                    {formatLocation(room?.location)}
+                                  </p>
+                                </div>
+                                <div className="flex items-center space-x-2 select-none">
+                                  <AlertDialog>
+                                    <AlertDialogTrigger>
+                                      <Button size="sm" variant="outline">
+                                        <Diff />
+                                        Guests: {totalGuests || 10} (total)
+                                      </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                      <AlertDialogHeader>
+                                        <AlertDialogTitle>Guests</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                          <div className="grid grid-cols-1 gap-4 text-black">
+                                            <div className="flex flex-row items-center justify-between border rounded-lg border-slate-400 p-4">
+                                              <div className="">
+                                                <span className="block font-semibold text-lg">
+                                                  Adults
+                                                </span>
+                                                <p>Age 20+</p>
+                                              </div>
+                                              <div className="flex items-center space-x-4">
+                                                <div id="count" className="text-lg px-2.5">
+                                                  {availability?.adults || 1}
+                                                </div>
+                                              </div>
+                                            </div>
+                                            <div className="flex flex-row items-center justify-between border rounded-lg border-slate-400 p-4">
+                                              <div className="">
+                                                <span className="block font-semibold text-lg">
+                                                  Children
+                                                </span>
+                                                <p>Age 2-12</p>
+                                              </div>
+                                              <div className="flex items-center space-x-4">
+                                                <div id="count" className="text-lg px-2.5">
+                                                  {availability?.children || 1}
+                                                </div>
+                                              </div>
+                                            </div>
+                                            <div className="flex flex-row items-center justify-between border rounded-lg border-slate-400 p-4">
+                                              <div className="">
+                                                <span className="block font-semibold text-lg">
+                                                  Infants
+                                                </span>
+                                                <p>Under 2</p>
+                                              </div>
+                                              <div className="flex items-center space-x-4">
+                                                <div id="count" className="text-lg px-2.5">
+                                                  {availability?.infants || 1}
+                                                </div>
+                                              </div>
+                                            </div>
                                           </div>
-                                          <Button
-                                            variant="outline"
-                                            size="icon"
-                                            id="add"
-                                            disabled
-                                          >
-                                            <CirclePlus />
-                                          </Button>
-                                        </div>
-                                      </div>
-                                      <div className="flex flex-row items-center justify-between border rounded-lg border-slate-400 p-4">
-                                        <div className="">
-                                          <span className="block font-semibold text-lg">
-                                            Children
-                                          </span>
-                                          <p>Age 2-12</p>
-                                        </div>
-                                        <div className="flex items-center space-x-4">
-                                          <Button
-                                            variant="outline"
-                                            size="icon"
-                                            id="subtract"
-                                            disabled
-                                          >
-                                            <CircleMinus />
-                                          </Button>
-                                          <div id="count" className="text-lg">
-                                            1
-                                          </div>
-                                          <Button
-                                            variant="outline"
-                                            size="icon"
-                                            id="add"
-                                            disabled
-                                          >
-                                            <CirclePlus />
-                                          </Button>
-                                        </div>
-                                      </div>
-                                      <div className="flex flex-row items-center justify-between border rounded-lg border-slate-400 p-4">
-                                        <div className="">
-                                          <span className="block font-semibold text-lg">
-                                            Infants
-                                          </span>
-                                          <p>Under 2</p>
-                                        </div>
-                                        <div className="flex items-center space-x-4">
-                                          <Button
-                                            variant="outline"
-                                            size="icon"
-                                            id="subtract"
-                                            disabled
-                                          >
-                                            <CircleMinus />
-                                          </Button>
-                                          <div id="count" className="text-lg">
-                                            1
-                                          </div>
-                                          <Button
-                                            variant="outline"
-                                            size="icon"
-                                            id="add"
-                                            disabled
-                                          >
-                                            <CirclePlus />
-                                          </Button>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="cursor-not-allowed"
-                            >
-                              <CalendarIcon />
-                              Check In: March 24 (6:00 AM) to March 25 (8:00 PM)
-                            </Button>
+                                        </AlertDialogDescription>
+                                      </AlertDialogHeader>
+                                      <AlertDialogFooter>
+                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="cursor-not-allowed"
+                                  >
+                                    <CalendarIcon />
+                                    Check In: {formatDate(booking.booking_date_added)} to{" "}
+                                    {formatDate(booking.receipt_record?.receipt_expiration)}
+                                  </Button>
+                                </div>
+                              </div>
+                              <div className="py-1 border-slate-300 border-b w-full" />
+                              <div className="flex flex-row justify-between items-center select-none">
+                                <p>Payment Status: {booking.mode_of_payment || "PAID thru CASH"}</p>
+                                <p className="font-bold text-lg">₱{booking.receipt_record?.order_reservation_total || 2000}</p>
+                              </div>
+                              <div className="absolute top-0 right-0 z-10 select-none flex flex-row space-x-2">
+                                <Link to={``}>
+                                  <Button variant="outline" size="sm">
+                                    View Details
+                                  </Button>
+                                </Link>
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                        <div className="py-1 border-slate-300 border-b w-full" />
-                        <div className="flex flex-row justify-between items-center select-none">
-                          <p>Payment Status: PAID thru CASH</p>
-                          <p className="font-bold text-lg">₱2000</p>
-                        </div>
-                        <Link to="">
-                          <div className="absolute top-0 right-0 z-10 select-none flex flex-row space-x-2">
-                            <Button variant="outline" className="">
-                              View Receipt
-                            </Button>
-                            <Button variant="outline" className="">
-                              View Details
-                            </Button>
-                          </div>
-                        </Link>
-                      </div>
+                        );
+                      })}
                     </div>
-                  </div>
+                  )}
                 </ScrollArea>
               </div>
             </section>
@@ -491,10 +496,11 @@ function StaySuite_User_Booking() {
                       id=""
                       placeholder="Leave a comment"
                       className="h-[200px]"
+                      disabled
                     />
                   </div>
-                  <div className="flex w-full justify-end space-x-2">
-                    <Button>Submit</Button>
+                  <div className="pt-2 flex w-full justify-end space-x-2 cursor-not-allowed">
+                    <Button className="w-full" disabled>Submit</Button>
                   </div>
                 </div>
               </div>
