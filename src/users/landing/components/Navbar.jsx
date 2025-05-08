@@ -23,7 +23,7 @@ export function Navbar_Public({ className, ...props }) {
                     </Link>
                     <a href="/EIM-HMS-3O.zip" download>
                         <Button className="rounded-md">
-                            <ArrowDownToLine className="mr-2 h-4 w-4" /> Get for Desktop
+                            <ArrowDownToLine className="-ml-1 h-4 w-4" /> Get for Desktop
                         </Button>
                     </a>
                 </nav>
