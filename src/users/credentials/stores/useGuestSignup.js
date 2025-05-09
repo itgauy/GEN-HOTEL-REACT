@@ -18,7 +18,18 @@ const useGuestSignup = create(
     (set, get) => ({
       email: "",
       accessToken: "",
+      alert: {
+        isOpen: false,
+        message: "",
+        type: "success", // 'success' or 'error'
+      },
       setEmail: (email) => set({ email }),
+
+      // Action to set alert state
+      setAlert: (alert) => set({ alert }),
+
+      // Clear alert
+      clearAlert: () => set({ alert: { isOpen: false, message: "", type: "success" } }),
 
       // ✅ Step 1: Trigger backend to generate a new OTP (POST)
       verifyEmail: async (email) => {
@@ -34,6 +45,13 @@ const useGuestSignup = create(
           const data = getResponse?.data;
 
           if (!Array.isArray(data) || data.length === 0) {
+            set({
+              alert: {
+                isOpen: true,
+                message: "No OTP records found.",
+                type: "error",
+              },
+            });
             return { success: false, message: "No OTP records found." };
           }
 
@@ -43,7 +61,7 @@ const useGuestSignup = create(
           const token = latest.access_token;
           if (token) {
             const expiresAt = Date.now() + 45 * 60 * 1000;
-            const cookieExpiry = new Date(Date.now() + 45 * 60 * 1000).toUTCString();
+            const cookieExpiry = new Date(expiresAt).toUTCString();
 
             document.cookie = `hotel-guest-registration=${token}; expires=${cookieExpiry}; path=/; SameSite=Strict`;
             sessionStorage.setItem("temporary_access", JSON.stringify({ token, expiresAt }));
@@ -51,20 +69,38 @@ const useGuestSignup = create(
             set({ accessToken: token });
           }
 
+          set({
+            alert: {
+              isOpen: true,
+              message: "OTP sent successfully to your email.",
+              type: "success",
+            },
+          });
           return { success: true, message: "OTP sent and access token cookie issued." };
         } catch (error) {
           console.error("OTP Request Failed:", error);
+          set({
+            alert: {
+              isOpen: true,
+              message: error.message || "Failed to send OTP. Please try again.",
+              type: "error",
+            },
+          });
           return { success: false, message: error.message };
         }
       },
-
-      // .. hide some data.
-
 
       // ✅ Step 2: Validate OTP and Expiration (GET)
       verifyOTP: async (otp) => {
         const email = get().email;
         if (!email) {
+          set({
+            alert: {
+              isOpen: true,
+              message: "Email is not set.",
+              type: "error",
+            },
+          });
           return { success: false, message: "Email is not set." };
         }
 
@@ -73,31 +109,73 @@ const useGuestSignup = create(
           const data = getResponse?.data;
 
           if (!Array.isArray(data) || data.length === 0) {
+            set({
+              alert: {
+                isOpen: true,
+                message: "No OTP records found.",
+                type: "error",
+              },
+            });
             return { success: false, message: "No OTP records found." };
           }
 
           const latest = data[data.length - 1];
 
           if (latest.email !== email) {
+            set({
+              alert: {
+                isOpen: true,
+                message: "Email mismatch in latest OTP record.",
+                type: "error",
+              },
+            });
             return { success: false, message: "Email mismatch in latest OTP record." };
           }
 
           if (latest.otp !== otp) {
+            set({
+              alert: {
+                isOpen: true,
+                message: "Invalid OTP. Please try again.",
+                type: "error",
+              },
+            });
             return { success: false, message: "OTP does not match." };
           }
 
           const now = new Date();
           const expiresAt = new Date(latest.expiration);
           if (expiresAt < now) {
+            set({
+              alert: {
+                isOpen: true,
+                message: "OTP has expired. Please request a new one.",
+                type: "error",
+              },
+            });
             return { success: false, message: "OTP has expired." };
           }
 
+          set({
+            alert: {
+              isOpen: true,
+              message: "OTP verified successfully!",
+              type: "success",
+            },
+          });
           return {
             success: true,
             message: "OTP verified successfully.",
           };
         } catch (error) {
           console.error("OTP Validation Failed:", error);
+          set({
+            alert: {
+              isOpen: true,
+              message: error.message || "Failed to verify OTP. Please try again.",
+              type: "error",
+            },
+          });
           return { success: false, message: error.message };
         }
       },
@@ -135,13 +213,26 @@ const useGuestSignup = create(
           deleteCookie("hotel-guest-registration");
           set({ email: "", accessToken: "" });
 
+          set({
+            alert: {
+              isOpen: true,
+              message: "Registration successful!",
+              type: "success",
+            },
+          });
           return { success: true, data: response.data };
         } catch (error) {
           console.error("Registration failed:", error);
+          set({
+            alert: {
+              isOpen: true,
+              message: error.message || "Registration failed. Please try again.",
+              type: "error",
+            },
+          });
           return { success: false, message: error.message };
         }
       },
-
     }),
     {
       name: "guest-signup-storage",
