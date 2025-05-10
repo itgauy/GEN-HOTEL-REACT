@@ -29,20 +29,10 @@ const data = {
   },
   navMain: [
     {
-      title: "Chats",
-      url: "#",
+      title: "Forums",
+      url: "/assistance-admin/forums",
       icon: FileText,
-    },
-    {
-      title: "Inquiries",
-      url: "#",
-      icon: FileText,
-    },
-    {
-      title: "Activity Logs",
-      url: "#",
-      icon: FileText,
-    },
+    }
   ],
 };
 

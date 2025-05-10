@@ -5,6 +5,7 @@ import Booking_Reservation_Page from '../pages/MainPage';
 import ReservationsData from '../pages/Reservations';
 import { RequiredAuth } from '@/lib/Auth';
 import Reservation_UpdateData from '../pages/UpdateData';
+import BookingAnalytics from '../pages/Analytics';
 
 const ReservationAdminRoutes = () => [
   <React.Fragment key="reservation-routes">
@@ -19,7 +20,7 @@ const ReservationAdminRoutes = () => [
     >
       <Route index element={<Booking_Reservation_Page />} />
       <Route path="bookings" element={<ReservationsData />} />
-      {/* <Route path="bookings/manage" element={} /> */}
+      <Route path="analytics" element={<BookingAnalytics />} />
     </Route>
     <Route
       key="bookings_manage"

@@ -9,6 +9,14 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LoaderCircle } from "lucide-react";
@@ -19,36 +27,38 @@ export function Registration_Email({ className, ...props }) {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  const { setEmail, verifyEmail } = useGuestSignup();
+  const { setEmail, verifyEmail, alert, clearAlert } = useGuestSignup();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-  
+
     console.log("[DEBUG] Submitting email:", email);
     setEmail(email); // Save to Zustand store
     console.log("[DEBUG] Zustand email set:", email);
-  
+
     try {
       const result = await verifyEmail(email);
       console.log("[DEBUG] verifyEmail result:", result);
-  
+
       if (result.success) {
         console.log("[DEBUG] Verification successful, navigating...");
         navigate("/auth/login/register/verify");
       } else {
         console.warn("[WARN] Verification failed:", result.message);
-        alert(result.message || "Verification failed.");
       }
     } catch (error) {
       console.error("[ERROR] Exception in verifyEmail:", error);
-      alert("Something went wrong during verification.");
     } finally {
       setLoading(false);
       console.log("[DEBUG] Done processing form.");
     }
   };
-    
+
+  const handleCloseAlert = () => {
+    clearAlert();
+  };
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -96,6 +106,19 @@ export function Registration_Email({ className, ...props }) {
         By clicking continue, you agree to our <a href="#">Terms of Service</a> and{" "}
         <a href="#">Privacy Policy</a>.
       </div>
+
+      {/* Alert Dialog */}
+      <AlertDialog open={alert.isOpen} onOpenChange={handleCloseAlert}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{alert.type === "success" ? "Success" : "Error"}</AlertDialogTitle>
+            <AlertDialogDescription>{alert.message}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <Button onClick={handleCloseAlert}>OK</Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

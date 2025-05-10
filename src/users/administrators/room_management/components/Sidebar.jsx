@@ -41,32 +41,32 @@ const data = {
         },
       ],
     },
-    {
-      title: "Room Monitoring",
-      url: "#",
-      items: [
-        {
-          title: "Overview",
-          url: "/room-admin/overview",
-        },
-        {
-          title: "Maintenance",
-          url: "#",
-        },
-        {
-          title: "Inventory",
-          url: "#",
-        },
-        {
-          title: "Room Status",
-          url: "#",
-        },
-        {
-          title: "Room Amenities",
-          url: "#",
-        },
-      ],
-    },
+    // {
+    //   title: "Room Monitoring",
+    //   url: "#",
+    //   items: [
+    //     {
+    //       title: "Overview",
+    //       url: "/room-admin/overview",
+    //     },
+    //     {
+    //       title: "Maintenance",
+    //       url: "#",
+    //     },
+    //     {
+    //       title: "Inventory",
+    //       url: "#",
+    //     },
+    //     {
+    //       title: "Room Status",
+    //       url: "#",
+    //     },
+    //     {
+    //       title: "Room Amenities",
+    //       url: "#",
+    //     },
+    //   ],
+    // },
   ],
 };
 

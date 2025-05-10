@@ -25,6 +25,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogFooter,
+} from "@/components/ui/alert-dialog";
 import { motion, AnimatePresence } from "motion/react";
 import useBookingStore from "../stores/booking.stores";
 
@@ -44,7 +52,7 @@ const formatDate = (dateString) => {
 function Reservation_UpdateData() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { booking, fetchBookingById, loading, error } = useBookingStore();
+  const { booking, fetchBookingById, bookingUpdate, loading, error, alert, clearAlert } = useBookingStore();
 
   const pageVariants = {
     initial: { opacity: 0, x: 100 },
@@ -86,7 +94,9 @@ function Reservation_UpdateData() {
         contactFirstName: booking.contact_information?.contact_first_name || "",
         contactLastName: booking.contact_information?.contact_last_name || "",
         modeOfPayment: booking.mode_of_payment || "",
+        payment_status: booking.payment_status || "UNPAID",
       });
+      setPaymentStatus(booking.payment_status || "UNPAID");
     }
   }, [booking]);
 
@@ -94,6 +104,56 @@ function Reservation_UpdateData() {
   const handlePaymentStatusChange = (value) => {
     console.log("Reservation_UpdateData: Payment status changed to", value);
     setPaymentStatus(value);
+  };
+
+  // Handle Proceed button click to update payment status and handled_by
+  const handleProceed = async () => {
+    try {
+      console.log("Reservation_UpdateData: Proceeding with update", { paymentStatus, id });
+
+      // Retrieve auth-storage from localStorage
+      const authStorage = localStorage.getItem("auth-storage");
+      let handledById = null;
+
+      if (authStorage) {
+        try {
+          const authData = JSON.parse(authStorage);
+          handledById = authData?.state?.user?._id;
+          if (!handledById) {
+            console.error("Reservation_UpdateData: No _id found in auth-storage");
+            throw new Error("User ID not found in auth-storage");
+          }
+        } catch (error) {
+          console.error("Reservation_UpdateData: Error parsing auth-storage", error);
+          throw new Error("Invalid auth-storage data");
+        }
+      } else {
+        console.error("Reservation_UpdateData: auth-storage not found in localStorage");
+        throw new Error("Authentication data not found");
+      }
+
+      // Construct the request body
+      const requestBody = {
+        payment_status: paymentStatus,
+        handled_by: handledById,
+        email_address: bookingData.email,
+      };
+
+      console.log("Reservation_UpdateData: Sending update request with body", requestBody);
+
+      // Send the update request
+      await bookingUpdate(id, requestBody);
+    } catch (error) {
+      console.error("Reservation_UpdateData: Error in handleProceed", error);
+      // Optionally, update the store to show an error alert
+      useBookingStore.setState({
+        alert: {
+          show: true,
+          type: "error",
+          message: error.message || "Failed to update booking",
+        },
+      });
+    }
   };
 
   if (loading) {
@@ -143,10 +203,15 @@ function Reservation_UpdateData() {
               </span>
             </div>
             <Button
-              disabled={true}
               className="bg-slate-900 text-white hover:bg-slate-800 flex items-center gap-2"
+              onClick={handleProceed}
+              disabled={loading}
             >
-              Proceed
+              {loading ? (
+                <LoaderCircle className="animate-spin" size={16} />
+              ) : (
+                "Proceed"
+              )}
             </Button>
           </div>
           <div className="flex flex-row h-full bg-gray-100">
@@ -262,8 +327,7 @@ function Reservation_UpdateData() {
                             type="button"
                             size="icon"
                             disabled
-                            className=" ASSESSMENT OF SOCIAL AND ENVIRONMENTAL IMPACTS
-bg-background text-muted-foreground/80 hover:bg-accent hover:text-foreground -me-px flex aspect-square h-[inherit] items-center justify-center rounded-e-md text-sm transition-[color,box-shadow] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
+                            className="bg-background text-muted-foreground/80 hover:bg-accent hover:text-foreground -me-px flex aspect-square h-[inherit] items-center justify-center rounded-e-md text-sm transition-[color,box-shadow] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
                           >
                             <PlusIcon size={16} aria-hidden="true" />
                           </Button>
@@ -513,7 +577,7 @@ bg-background text-muted-foreground/80 hover:bg-accent hover:text-foreground -me
                   </Select>
                 </div>
                 <div
-                  className="flex items-start p-4 text-sm text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800 space-x-3 w-full"
+                  className="flex items-start p-4 text-sm text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text meanings-blue-400 dark:border-blue-800 space-x-3 w-full"
                   role="alert"
                 >
                   <Info size={48} className="p-0" />
@@ -528,6 +592,19 @@ bg-background text-muted-foreground/80 hover:bg-accent hover:text-foreground -me
           </div>
         </section>
       </motion.section>
+
+      {/* Alert Dialog for Success/Error Messages */}
+      <AlertDialog open={alert.show} onOpenChange={clearAlert}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{alert.type === "success" ? "Success" : "Error"}</AlertDialogTitle>
+            <AlertDialogDescription>{alert.message}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <Button onClick={clearAlert}>Close</Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </AnimatePresence>
   );
 }

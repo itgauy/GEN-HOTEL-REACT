@@ -142,10 +142,10 @@ export function NavUser() {
               <DropdownMenuSeparator />
 
               <DropdownMenuGroup>
-                <DropdownMenuItem>
+                {/* <DropdownMenuItem>
                   <BadgeCheck className="mr-2" />
                   Account
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
                 <AlertDialogTrigger className="w-full">
                   <DropdownMenuItem>
                     <LogOut className="mr-2" />

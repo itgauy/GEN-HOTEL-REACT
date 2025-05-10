@@ -20,29 +20,29 @@ export function Navigate() {
           </CardHeader>
           <CardContent>
             <div className="flex flex-col gap-2">
-              <Button
+              {/* <Button
                 className={cn("w-full")}
                 onClick={() => handleRoleSelection('/kms-admin')}
               >
                 Knowledge Management System
-              </Button>
+              </Button> */}
               <Button
                 className={cn("w-full")}
                 onClick={() => handleRoleSelection('/room-admin')}
               >
-                Room Data Management
+                Room Management Module
               </Button>
               <Button
                 className={cn("w-full")}
                 onClick={() => handleRoleSelection('/reservations-admin')}
               >
-                Booking Reservations (Dept.)
+                Booking Reservations Module
               </Button>
               <Button
                 className={cn("w-full")}
                 onClick={() => handleRoleSelection('/assistance-admin')}
               >
-                Booking Assistance
+                Booking Assistance Module
               </Button>
             </div>
           </CardContent>
