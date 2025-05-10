@@ -28,7 +28,7 @@ export default function BookingAnalytics() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <MetricCard
           title="Total Revenue"
-          value="$1,250.00"
+          value="₱20.00"
           change="+12.5%"
           trend="up"
           description="Trending up this month"
@@ -36,7 +36,7 @@ export default function BookingAnalytics() {
         />
         <MetricCard
           title="New Customers"
-          value="1,234"
+          value="2"
           change="-20%"
           trend="down"
           description="Down 20% this period"
@@ -44,7 +44,7 @@ export default function BookingAnalytics() {
         />
         <MetricCard
           title="Bookings for this Month"
-          value="328"
+          value="3"
           change="+8.3%"
           trend="up"
           description="Increasing steadily"
@@ -52,7 +52,7 @@ export default function BookingAnalytics() {
         />
         <MetricCard
           title="Active Accounts"
-          value="45,678"
+          value="2"
           change="+12.5%"
           trend="up"
           description="Strong user retention"
