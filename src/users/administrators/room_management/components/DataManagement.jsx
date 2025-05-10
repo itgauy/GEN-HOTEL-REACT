@@ -64,7 +64,7 @@ const HotelDataTable = ({ data, selectedItems, setSelectedItems }) => {
             </TableHead>
             <TableHead>Room Title</TableHead>
             <TableHead>Slots</TableHead>
-            <TableHead>Room Availability</TableHead>
+            <TableHead>Capacity</TableHead>
             <TableHead>Issued By</TableHead>
             <TableHead>Date & Time</TableHead>
             <TableHead className="w-[50px]"></TableHead>
