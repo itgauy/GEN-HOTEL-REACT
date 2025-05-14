@@ -13,11 +13,10 @@ import { Heart } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import {
   startOfDay,
-  isBefore,
   format,
   startOfMonth,
   endOfMonth,
-  addDays,
+  isBefore,
 } from "date-fns";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -65,7 +64,7 @@ function StaySuite_User_Room() {
     fetchRoomById(id);
   }, [id, fetchRoomById]);
 
-// Check slot_availability after selectedRoom updates
+  // Check slot_availability after selectedRoom updates
   useEffect(() => {
     if (selectedRoom) {
       const isUnavailable = selectedRoom.slot_availability === 0;
@@ -75,12 +74,8 @@ function StaySuite_User_Room() {
   }, [selectedRoom]);
 
   const today = startOfDay(new Date());
-  const [checkInMain, setCheckInMain] = useState(null);
-  const [date] = useState(today);
-  const [timeCheckIn, setTimeCheckIn] = useState(null);
+  const [checkInMain, setCheckInMain] = useState(today); // Initialize with today's date
   const [checkOutMain, setCheckOutMain] = useState(null);
-  const [startTime, setStartTime] = useState(null);
-  const [endTime, setEndTime] = useState(null);
   const [guests, setGuests] = useState({
     adults: 1,
     children: 0,
@@ -163,17 +158,6 @@ function StaySuite_User_Room() {
     return 1;
   };
 
-  // Helper to check if a time slot is in the selected range
-  const isInRange = (timeSlot) => {
-    if (!startTime || !endTime) return false;
-    const slotTime = new Date(timeSlot).getTime();
-    const start = new Date(startTime).getTime();
-    const end = new Date(endTime).getTime();
-    const minTime = Math.min(start, end);
-    const maxTime = Math.max(start, end);
-    return slotTime > minTime && slotTime < maxTime;
-  };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -185,58 +169,6 @@ function StaySuite_User_Room() {
   if (error || !selectedRoom) {
     return <p>Error loading room: {error || "Room not found"}</p>;
   }
-
-  // Mock time slots data
-  const timeSlots = [
-    { time: "2025-03-24T00:00:00Z", available: false },
-    { time: "2025-03-24T00:30:00Z", available: false },
-    { time: "2025-03-24T01:00:00Z", available: true },
-    { time: "2025-03-24T01:30:00Z", available: true },
-    { time: "2025-03-24T02:00:00Z", available: true },
-    { time: "2025-03-24T02:30:00Z", available: true },
-    { time: "2025-03-24T03:00:00Z", available: false },
-    { time: "2025-03-24T03:30:00Z", available: true },
-    { time: "2025-03-24T04:00:00Z", available: true },
-    { time: "2025-03-24T04:30:00Z", available: true },
-    { time: "2025-03-24T05:00:00Z", available: true },
-    { time: "2025-03-24T05:30:00Z", available: false },
-    { time: "2025-03-24T06:00:00Z", available: true },
-    { time: "2025-03-24T06:30:00Z", available: true },
-    { time: "2025-03-24T07:00:00Z", available: true },
-    { time: "2025-03-24T07:30:00Z", available: true },
-    { time: "2025-03-24T08:00:00Z", available: false },
-    { time: "2025-03-24T08:30:00Z", available: true },
-    { time: "2025-03-24T09:00:00Z", available: true },
-    { time: "2025-03-24T09:30:00Z", available: true },
-    { time: "2025-03-24T10:00:00Z", available: true },
-    { time: "2025-03-24T10:30:00Z", available: false },
-    { time: "2025-03-24T11:00:00Z", available: true },
-    { time: "2025-03-24T11:30:00Z", available: true },
-    { time: "2025-03-24T12:00:00Z", available: false },
-    { time: "2025-03-24T12:30:00Z", available: true },
-    { time: "2025-03-24T13:00:00Z", available: true },
-    { time: "2025-03-24T13:30:00Z", available: true },
-    { time: "2025-03-24T14:00:00Z", available: true },
-    { time: "2025-03-24T14:30:00Z", available: false },
-    { time: "2025-03-24T15:00:00Z", available: true },
-    { time: "2025-03-24T15:30:00Z", available: true },
-    { time: "2025-03-24T16:00:00Z", available: true },
-    { time: "2025-03-24T16:30:00Z", available: true },
-    { time: "2025-03-24T17:00:00Z", available: true },
-    { time: "2025-03-24T17:30:00Z", available: true },
-    { time: "2025-03-24T18:00:00Z", available: true },
-    { time: "2025-03-24T18:30:00Z", available: true },
-    { time: "2025-03-24T19:00:00Z", available: true },
-    { time: "2025-03-24T19:30:00Z", available: false },
-    { time: "2025-03-24T20:00:00Z", available: true },
-    { time: "2025-03-24T20:30:00Z", available: true },
-    { time: "2025-03-24T21:00:00Z", available: true },
-    { time: "2025-03-24T21:30:00Z", available: true },
-    { time: "2025-03-24T22:00:00Z", available: true },
-    { time: "2025-03-24T22:30:00Z", available: false },
-    { time: "2025-03-24T23:00:00Z", available: true },
-    { time: "2025-03-24T23:30:00Z", available: true },
-  ];
 
   return (
     <>
@@ -288,7 +220,7 @@ function StaySuite_User_Room() {
                 id="slot_availability"
                 className="leading-snug lg:leading-normal font-thin text-lg text-gray-500"
               >
-                {selectedRoom.slot_availability} slots for guests
+                Capacity: {selectedRoom.room_details[0]?.room_availability?.adults || 0} Adults, {selectedRoom.room_details[0]?.room_availability?.children || 0} Children and {selectedRoom.room_details[0]?.room_availability?.infants || 0} Infants
               </div>
               <div
                 id="slot_availability"
@@ -300,7 +232,7 @@ function StaySuite_User_Room() {
             </div>
             <div id="amentities">
               <span className="block font-semibold text-2xl mb-4">
-                What this place offers?
+                Room Amenities
               </span>
               <div className="grid grid-cols-2 gap-6">
                 {selectedRoom.room_details[0]?.amenities_offer.map((amenity) => (
@@ -318,28 +250,15 @@ function StaySuite_User_Room() {
               <div className="pt-12 border-slate-300 border-b w-full" />
             </div>
           </div>
-          {/* <div className="mt-8 space-y-4">
-            <div className="space-y-2">
-              <span className="block font-semibold text-2xl mb-4">
-                {calculateNights()} nights in {selectedRoom.location.city}
-              </span>
-              <p className="text-gray-500">
-                For this place, this is all booking reservations for this month of{" "}
-                {firstDay} to {lastDay}
-              </p>
-            </div>
-            <div className="flex xs:flex-col lg:flex-row items-start lg:space-x-4 mt-8">
-            </div>
-          </div> */}
         </section>
 
         <section className="lg:col-span-4 lg:sticky lg:top-24 lg:self-start shadow-lg bg-white border rounded-xl p-6">
           <div className="w-full space-y-4">
             <div id="price_per_night" className="inline-flex items-end space-x-2">
               <span className="font-bold text-2xl">
-                ₱{selectedRoom.room_details[0]?.initial_price_per_night}
+                ₱{selectedRoom.room_details[0]?.initial_price_per_night.toFixed(2)}
               </span>
-              <p className="text-lg">per night</p>
+              <p className="text-lg">Initial Price</p>
             </div>
 
             <Dialog>
@@ -392,75 +311,25 @@ function StaySuite_User_Room() {
                     </div>
                     <div className="flex xs:flex-col lg:flex-row items-start lg:space-x-4 mb-4">
                       <div className="rounded-md border">
-                        <div className="flex max-sm:flex-col">
-                          <Calendar
-                            mode="range"
-                            selected={{ from: checkInMain, to: checkOutMain }}
-                            onSelect={(range) => {
-                              if (range) {
-                                setCheckInMain(range.from || null);
-                                setCheckOutMain(range.to || null);
-                              } else {
-                                setCheckInMain(null);
-                                setCheckOutMain(null);
-                              }
-                            }}
-                            className="lg:w-[250px]"
-                            disabled={(date) => isBefore(date, today)}
-                            classNames={{
-                              day_disabled: "text-muted-foreground opacity-50 line-through",
-                            }}
-                          />
-                          <div className="relative w-full max-sm:h-48 sm:w-40">
-                            <div className="absolute inset-0 py-4 max-sm:border-t">
-                              <ScrollArea className="h-full sm:border-s">
-                                <div className="space-y-3">
-                                  <div className="flex h-5 shrink-0 items-center px-5">
-                                    <p className="text-sm font-medium">{format(date, "EEEE, d")}</p>
-                                  </div>
-                                  <div className="grid gap-1.5 px-5 max-sm:grid-cols-2">
-                                    {timeSlots.map(({ time: timeSlot, available }) => {
-                                      const dateObj = new Date(timeSlot);
-                                      const formattedTime = dateObj.toLocaleTimeString("en-US", {
-                                        hour: "numeric",
-                                        minute: "2-digit",
-                                        hour12: true,
-                                      });
-
-                                      return (
-                                        <Button
-                                          key={timeSlot}
-                                          variant={
-                                            timeSlot === startTime || timeSlot === endTime
-                                              ? "default"
-                                              : isInRange(timeSlot)
-                                                ? "range"
-                                                : "outline"
-                                          }
-                                          size="sm"
-                                          className="w-full"
-                                          onClick={() => {
-                                            if (!startTime) {
-                                              setStartTime(timeSlot);
-                                            } else if (!endTime) {
-                                              setEndTime(timeSlot);
-                                            } else {
-                                              setStartTime(timeSlot);
-                                              setEndTime(null);
-                                            }
-                                          }}
-                                          disabled={!available}
-                                        >
-                                          {formattedTime}
-                                        </Button>
-                                      );
-                                    })}
-                                  </div>
-                                </div>
-                              </ScrollArea>
-                            </div>
-                          </div>
-                        </div>
+                        <Calendar
+                          mode="range"
+                          selected={{ from: checkInMain, to: checkOutMain }}
+                          defaultSelected={{ from: today, to: null }}
+                          onSelect={(range) => {
+                            if (range) {
+                              setCheckInMain(range.from || today);
+                              setCheckOutMain(range.to || null);
+                            } else {
+                              setCheckInMain(today);
+                              setCheckOutMain(null);
+                            }
+                          }}
+                          className="lg:w-[250px]"
+                          disabled={(date) => isBefore(date, today)}
+                          classNames={{
+                            day_disabled: "text-muted-foreground opacity-50 line-through",
+                          }}
+                        />
                       </div>
                     </div>
 
@@ -559,16 +428,15 @@ function StaySuite_User_Room() {
                 </DialogDescription>
               </DialogContent>
             </Dialog>
-            {/* Add some validation checks first from slot_availability thing */}
             <Dialog>
               <DialogTrigger className="w-full" disabled={selectedRoom.slot_availability === 0}>
                 <Button
                   size="lg"
                   className="w-full select-none"
                   onClick={handleCreateReservation}
-                  disabled={selectedRoom.slot_availability === 0}
+                  disabled={selectedRoom.slot_availability === 0 || !checkInMain || !checkOutMain}
                 >
-                  Reserve
+                  Add to Queue
                 </Button>
               </DialogTrigger>
               <DialogContent>
@@ -592,10 +460,10 @@ function StaySuite_User_Room() {
                 className="w-full flex items-start flex-row justify-between"
               >
                 <span className="underline cursor-pointer">
-                  ₱{selectedRoom.room_details[0]?.initial_price_per_night.toLocaleString()} x {calculateNights()} night{calculateNights() !== 1 ? "s" : ""}
+                  ₱{selectedRoom.room_details[0]?.initial_price_per_night.toFixed(2)} x {calculateNights()} night{calculateNights() !== 1 ? "s" : ""}
                 </span>
                 <span>
-                  ₱{(selectedRoom.room_details[0]?.initial_price_per_night * calculateNights()).toLocaleString()}
+                  ₱{(selectedRoom.room_details[0]?.initial_price_per_night * calculateNights()).toFixed(2)}
                 </span>
               </div>
               <div
@@ -603,7 +471,7 @@ function StaySuite_User_Room() {
                 className="w-full flex items-start flex-row justify-between"
               >
                 <span className="underline cursor-pointer">Service fee</span>
-                <span>₱{20}</span>
+                <span>₱{20.00.toFixed(2)}</span>
               </div>
               <div className="py-2 border-slate-300 border-b w-full" />
               <div
@@ -611,14 +479,13 @@ function StaySuite_User_Room() {
                 className="w-full flex items-start flex-row justify-between text-lg font-bold"
               >
                 <span>Total</span>
-                <span>₱{(selectedRoom.room_details[0]?.initial_price_per_night * calculateNights() + 20).toLocaleString()}</span>
+                <span>₱{(selectedRoom.room_details[0]?.initial_price_per_night * calculateNights() + 20).toFixed(2)}</span>
               </div>
             </div>
           </div>
         </section>
       </section>
     </>
-
   );
 }
 

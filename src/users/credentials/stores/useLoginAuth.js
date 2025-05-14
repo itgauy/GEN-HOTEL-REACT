@@ -74,6 +74,7 @@ const useLoginAuth = create(
         deleteCookie('refresh_token');
         set({ isAuthenticated: false, refreshToken: null, user: null });
         localStorage.removeItem('auth-storage');
+        deleteCookie('hideBookingQueueImportantFacts');
       },
 
       // This should be use everytime if there is PUT request to update data.

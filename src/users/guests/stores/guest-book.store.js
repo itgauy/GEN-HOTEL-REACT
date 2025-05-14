@@ -54,9 +54,12 @@ const useGuestBookStore = create((set, get) => ({
   createGuestBook: async (data) => {
     set({ loading: true, error: null });
     try {
+      console.log('createGuestBook Payload:', JSON.stringify(data, null, 2));
       const response = await axios.post(import.meta.env.VITE_APP_GUEST_BOOKING, data);
+      console.log('createGuestBook Response:', JSON.stringify(response.data, null, 2));
       set({ guestBook: response.data.data, loading: false });
     } catch (error) {
+      console.error('createGuestBook Error:', error.response?.data?.message || 'Failed to create guest book', error);
       set({ error: error.response?.data?.message || 'Failed to create guest book', loading: false });
     }
   }
