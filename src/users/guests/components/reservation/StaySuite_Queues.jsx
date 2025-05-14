@@ -9,12 +9,15 @@ import {
   CirclePlus,
   Trash,
   UsersRoundIcon,
+  InfoIcon,
+  AlertCircle,
+  CheckIcon,
   LoaderCircle
 } from "lucide-react";
 import { Calendar as CalendarUI } from "@/components/ui/calendar";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Select,
   SelectContent,
@@ -63,6 +66,7 @@ import {
 import { useState, useEffect } from "react";
 import useGuestReserveStore from "../../stores/guest-reserve.store";
 import useGuestBookStore from "../../stores/guest-book.store";
+import Cookies from "js-cookie"; // Import js-cookie
 
 function StaySuite_User_Booking_Queues() {
   const { reservations, loading, error, fetchReservationsId, updateReservation, deleteReservation, createReservation, revalidateReservations } = useGuestReserveStore();
@@ -79,7 +83,7 @@ function StaySuite_User_Booking_Queues() {
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
   const [editingReservationId, setEditingReservationId] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false); // To handle multiple dialogs
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [guestCounts, setGuestCounts] = useState({
     adult: 0,
     children: 0,
@@ -88,6 +92,7 @@ function StaySuite_User_Booking_Queues() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [suffix, setSuffix] = useState("");
+  const [showImportantFacts, setShowImportantFacts] = useState(!Cookies.get("hideBookingQueueImportantFacts")); // Check cookie on load
 
   // Retrieve user data from localStorage
   const authStorage = localStorage.getItem('auth-storage');
@@ -112,11 +117,17 @@ function StaySuite_User_Booking_Queues() {
     return slotTime > minTime && slotTime < maxTime;
   };
 
+  // Handle closing the Important Facts message and setting the cookie
+  const handleCloseImportantFacts = () => {
+    setShowImportantFacts(false);
+    Cookies.set("hideBookingQueueImportantFacts", "true", { expires: 7 }); // Set cookie to expire in 7 days
+  };
+
   // Fetch and revalidate reservations on component mount
   useEffect(() => {
     if (userId) {
       fetchReservationsId(userId).then(() => {
-        revalidateReservations(); // Revalidate after initial fetch
+        revalidateReservations();
       });
     }
   }, [fetchReservationsId, revalidateReservations, userId]);
@@ -178,28 +189,28 @@ function StaySuite_User_Booking_Queues() {
   };
 
   const handleCreateReservation = async () => {
-    setIsSubmitting(true); // Start spinner
-  
+    setIsSubmitting(true);
+
     try {
       if (!firstName || !lastName) {
         alert("Please provide first name and last name.");
         return;
       }
-  
+
       if (reservations.length === 0) {
         alert("No reservations to submit.");
         return;
       }
-  
+
       const reservationRoomIds = reservations
         .map((reservation) => reservation.room_reservation?._id)
         .filter((id) => id);
-  
+
       if (reservationRoomIds.length === 0) {
         alert("No valid room reservations found.");
         return;
       }
-  
+
       const newGuestBook = {
         reservation_room: reservationRoomIds,
         booking_issued_by: userId,
@@ -214,25 +225,25 @@ function StaySuite_User_Booking_Queues() {
           order_reservation_total: orderReservationTotal,
         },
       };
-  
+
       console.log("Form Submission Payload:", JSON.stringify(newGuestBook, null, 2));
-  
+
       await createGuestBook(newGuestBook);
-  
+
       alert("Guest book entry created successfully!");
       setFirstName("");
       setLastName("");
       setSuffix("");
       console.log("Guest book entry created successfully with payload:", newGuestBook);
-  
+
       window.location.href = "/user/onboard/bookings/result";
     } catch (err) {
       console.error("Error during guest book creation:", err);
       alert("Failed to create guest book entry.");
     } finally {
-      setIsSubmitting(false); // Ensure this always runs
+      setIsSubmitting(false);
     }
-  };  
+  };
 
   // Handle deletion of reservation
   const handleDeleteReservation = async (reservationId) => {
@@ -311,7 +322,39 @@ function StaySuite_User_Booking_Queues() {
           <span className="font-bold text-2xl">Queueing</span>
           <Badge className="rounded-full">{reservations.length} Items</Badge>
         </div>
-        <div className="flex flex-col w-full">
+        <div className="flex flex-col w-full gap-4">
+          {showImportantFacts && (
+            <div className="border border-orange-400 bg-orange-50 p-4 rounded-xl w-full">
+              <div className="flex items-center flex-row w-full justify-between relative">
+                <div className="flex flex-row items-start space-x-2">
+                  <div className="rounded-full bg-orange-200 p-2">
+                    <AlertCircle size={20} className="text-orange-600" />
+                  </div>
+                  <div className="inline-flex flex-col w-full">
+                    <span className="font-bold text-orange-700">Important Facts</span>
+                    <p className="text-sm">Please review these key details before confirming your reservation:</p>
+                    <div className="mt-4 pt-3 border-t border-orange-300">
+                      <span className="font-bold text-orange-700">Terms & Conditions</span>
+                      <ul className="mt-2 text-sm list-disc pl-5 text-orange-700">
+                        <li><strong>Payment Policy:</strong> All payments must be made at the counter. Guests must present invoice receipt upon payment.</li>
+                        <li><strong>Check-in Process:</strong> Valid ID required for all guests. Credit card or cash deposit required for incidentals.</li>
+                        <li><strong>Check-out Process:</strong> Room inspection required before final checkout. All room keys must be returned to the front desk.</li>
+                        <li><strong>Early Check-in/Late Check-out:</strong> Subject to availability and may incur additional charges.</li>
+                        <li><strong>Damage Policy:</strong> Guests will be held responsible for any damage to hotel property.</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <Button
+                  onClick={handleCloseImportantFacts}
+                  className="absolute top-0 right-0"
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          )}
+
           <ScrollArea className="h-[400px] border border-slate-200 bg-gray-100 rounded-xl p-2">
             <div className="grid grid-cols-1 gap-4">
               {reservations.map((reservation) => (
@@ -622,25 +665,6 @@ function StaySuite_User_Booking_Queues() {
                   </div>
                 </div>
               ))}
-            </div>
-          </ScrollArea>
-          <ScrollArea className="mt-4 h-[300px]">
-            <div className="border border-blue-400 bg-b p-4 rounded-xl w-full">
-              <div className="flex items-center flex-row w-full justify-between">
-                <div className="flex flex-row items-start space-x-2">
-                  <div className="rounded-full bg-blue-200 p-2">
-                    <Puzzle size={20} className="text-blue-600" />
-                  </div>
-                  <div className="inline-flex flex-col">
-                    <span className="font-bold">Discount code</span>
-                    <p className="text-sm">Save 20% with discount code.</p>
-                  </div>
-                </div>
-                <Button className="cursor-not-allowed" disabled>
-                  <Smile />
-                  Discount Code
-                </Button>
-              </div>
             </div>
           </ScrollArea>
         </div>

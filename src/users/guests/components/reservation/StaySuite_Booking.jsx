@@ -145,7 +145,7 @@ function StaySuite_User_Booking() {
     <section className="pb-24">
       <Tabs defaultValue="pendings">
         <TabsList>
-          <TabsTrigger value="pendings">Pendings</TabsTrigger>
+          {/* <TabsTrigger value="pendings">Pendings</TabsTrigger> */}
           <TabsTrigger value="check-ins">Check-Ins</TabsTrigger>
         </TabsList>
         <TabsContent value="pendings">

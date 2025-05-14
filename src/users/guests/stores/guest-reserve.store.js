@@ -26,11 +26,15 @@ const useGuestReserveStore = create((set, get) => ({
   // Revalidate reservations
   revalidateReservations: async (userId) => {
     set({ loading: true, error: null });
-    if (userId) {
-      await get().fetchReservationsId(userId);
-    } else {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_APP_GUEST_RESERVE_QUEUE}/${id}`);
       set({ 
-        error: 'No user ID provided for revalidation', 
+        reservations: response.data.data, 
+        loading: false 
+      });
+    } catch (error) {
+      set({ 
+        error: error.response?.data?.message || 'Failed to fetch reservation', 
         loading: false 
       });
     }
