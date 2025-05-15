@@ -21,9 +21,9 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { NavUser } from "./Sidebar_UserDialog";
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
 
-// This is sample data.
+// Updated sample data with label property
 const data = {
   user: {
     name: "Kenneth O.",
@@ -32,41 +32,46 @@ const data = {
   },
   navMain: [
     {
+      label: "Knowledge Management System",
+      title: "Overview",
+      url: "#",
+      items: [
+        {
+          title: "Content Management",
+          url: "/hms-admin/hotel-cms",
+        },
+        {
+          title: "Forum Assistance",
+          url: "/hms-admin/hotel-forums",
+        },
+      ],
+    },
+    {
+      label: "Room Management Module",
       title: "Data Management",
       url: "#",
       items: [
         {
-          title: "Room / Condominiums",
-          url: "/room-admin/room-data",
+          title: "Hotel Rooms",
+          url: "/hms-admin/room-data",
         },
       ],
     },
-    // {
-    //   title: "Room Monitoring",
-    //   url: "#",
-    //   items: [
-    //     {
-    //       title: "Overview",
-    //       url: "/room-admin/overview",
-    //     },
-    //     {
-    //       title: "Maintenance",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Inventory",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Room Status",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Room Amenities",
-    //       url: "#",
-    //     },
-    //   ],
-    // },
+    {
+      label: "Booking Reservation Module",
+      title: "Overview",
+      url: "#",
+      items: [
+        {
+          title: "Reservations",
+          url: "/hms-admin/book-data",
+        },
+        {
+          title: "Basic Analytics",
+          url: "/hms-admin/book-analytic",
+        },
+      ],
+    },
   ],
 };
 
@@ -77,13 +82,13 @@ export function AppSidebar(props) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <a href="/room-admin">
+              <a href="/">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                   <GalleryVerticalEnd className="size-4" />
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold">Room Management</span>
-                  <span className="text-xs">Handle entire room data.</span>
+                  <span className="font-semibold">Hotel Management System</span>
+                  <span className="text-xs">Handle entire admin side.</span>
                 </div>
               </a>
             </SidebarMenuButton>
@@ -91,27 +96,26 @@ export function AppSidebar(props) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Administrator</SidebarGroupLabel>
-          <SidebarMenu>
-            {data.navMain.map((item, index) => (
+        {data.navMain.map((group, index) => (
+          <SidebarGroup key={index}>
+            <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
+            <SidebarMenu>
               <Collapsible
-                key={item.title}
                 defaultOpen={true}
                 className="group/collapsible"
               >
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton>
-                      {item.title}{" "}
+                      {group.title}{" "}
                       <Plus className="ml-auto group-data-[state=open]/collapsible:hidden" />
                       <Minus className="ml-auto group-data-[state=closed]/collapsible:hidden" />
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
-                  {item.items?.length ? (
+                  {group.items?.length ? (
                     <CollapsibleContent>
                       <SidebarMenuSub>
-                        {item.items.map((item) => (
+                        {group.items.map((item) => (
                           <SidebarMenuSubItem key={item.title}>
                             <SidebarMenuSubButton
                               asChild
@@ -126,9 +130,9 @@ export function AppSidebar(props) {
                   ) : null}
                 </SidebarMenuItem>
               </Collapsible>
-            ))}
-          </SidebarMenu>
-        </SidebarGroup>
+            </SidebarMenu>
+          </SidebarGroup>
+        ))}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

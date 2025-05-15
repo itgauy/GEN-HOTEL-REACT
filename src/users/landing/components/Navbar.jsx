@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
-import { ArrowDownToLine } from "lucide-react"
+import { User } from "lucide-react"
 
 export function Navbar_Public({ className, ...props }) {
     return (
@@ -15,17 +15,22 @@ export function Navbar_Public({ className, ...props }) {
                     <Link to="/homes" className="text-sm font-medium hover:underline">
                         Homes
                     </Link>
+                    <Link to="/blog" className="text-sm font-medium hover:underline">
+                        Articles
+                    </Link>
                     {/* <Link to="/blog" className="text-sm font-medium hover:underline">
                         Blog
                     </Link> */}
                     <Link to="/auth/login" className="text-sm font-medium hover:underline">
-                        Login
-                    </Link>
-                    <a href="/EIM-HMS-3O.zip" download>
-                        <Button className="rounded-md">
-                            <ArrowDownToLine className="-ml-1 h-4 w-4" /> Get for Desktop
+                        <Button>
+                            <User className="-ml-1 h-4 w-4" /> Login
                         </Button>
-                    </a>
+                    </Link>
+                    {/* <a href="/EIM-HMS-3O.zip" download>
+                        <Button className="rounded-md">
+                            <User className="-ml-1 h-4 w-4" /> Get for Desktop
+                        </Button>
+                    </a> */}
                 </nav>
             </div>
         </header>

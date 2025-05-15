@@ -108,6 +108,9 @@ export function Navbar_User({ className, ...props }) {
             <a href="/user/onboard/bookings" className="text-sm font-medium hover:underline">
               Reservations
             </a>
+            <a href="/user/onboard/forums" className="text-sm font-medium hover:underline">
+              Forums
+            </a>
             <div className="flex flex-row space-x-4 items-center">
               {/* Notify */}
               {/* <DropdownMenu>

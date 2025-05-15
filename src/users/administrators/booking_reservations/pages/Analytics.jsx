@@ -2,7 +2,7 @@ import { useState } from "react"
 import { ArrowDown, ArrowUp, ArrowUpRight } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Chart, ChartArea, ChartLine, ChartTooltip } from "@/components/ui/chart"
+// import { ChartContainer, ChartArea, ChartLine, ChartTooltip } from "@/components/ui/chart"
 
 export default function BookingAnalytics() {
   const [activeTab, setActiveTab] = useState("3months")
@@ -74,12 +74,12 @@ export default function BookingAnalytics() {
         </CardHeader>
         <CardContent>
           <div className="h-[300px]">
-            <Chart data={chartData}>
+            <ChartContainer data={chartData}>
               <ChartTooltip />
               <ChartLine dataKey="date" tickLine={false} axisLine={false} tick={{ fill: "#888888", fontSize: 12 }} />
               <ChartArea dataKey="engagement" stroke="#0ea5e9" fill="#0ea5e9" fillOpacity={0.2} name="Engagement" />
               <ChartArea dataKey="visitors" stroke="#f97316" fill="#f97316" fillOpacity={0.2} name="Visitors" />
-            </Chart>
+            </ChartContainer>
           </div>
         </CardContent>
       </Card>

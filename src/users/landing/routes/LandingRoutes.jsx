@@ -18,7 +18,7 @@ const LandingRoutes = () => [
       {/* You need to make it as dynamic route */}
       <Route path="/homes/room/:id" element={<StaySuite_Rooms_Public />} />
       <Route path="/blog" element={<StaySuite_Public_Blogs />} />
-      <Route path="/story" element={<StaySuite_Public_Blog_Article />} />
+      <Route path="/story/:id" element={<StaySuite_Public_Blog_Article />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
       <Route path="/registration-success" element={<RegistrationSuccess />} />
       <Route path="*" element={<ErrorPage />} />

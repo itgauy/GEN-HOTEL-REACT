@@ -5,7 +5,7 @@ import { AppSidebar } from "../components/Sidebar";
 import { Separator } from "@/components/ui/separator"
 import { Toaster } from "@/components/ui/toaster";
 
-function Room_Management_Appbar({ children }) {
+function OverAll_Appbar({ children }) {
     return (
         <SidebarProvider>
             <AppSidebar />
@@ -16,7 +16,7 @@ function Room_Management_Appbar({ children }) {
                         orientation="vertical"
                         className="mx-2 data-[orientation=vertical]:h-4"
                     />
-                    <h1 className="text-base font-medium">Hotel Rooms and Condominiums Data Management</h1>
+                    <h1 className="text-base font-medium">HMS Admin Modules</h1>
                 </div>
                 <Toaster />
                 <Outlet />
@@ -25,4 +25,4 @@ function Room_Management_Appbar({ children }) {
     );
 }
 
-export default Room_Management_Appbar;
+export default OverAll_Appbar;
