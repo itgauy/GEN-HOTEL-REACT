@@ -144,10 +144,9 @@ function StaySuite_User_Booking() {
   return (
     <section className="pb-24">
       <Tabs defaultValue="pendings">
-        <TabsList>
-          {/* <TabsTrigger value="pendings">Pendings</TabsTrigger> */}
+        {/* <TabsList>
           <TabsTrigger value="check-ins">Check-Ins</TabsTrigger>
-        </TabsList>
+        </TabsList> */}
         <TabsContent value="pendings">
           <section className="pt-4 grid xs:grid-cols-1 lg:grid-cols-12 mx-auto lg:container gap-6">
             <section className="lg:col-span-7 flex flex-col items-start space-y-4">
@@ -279,13 +278,13 @@ function StaySuite_User_Booking() {
                                 <p>Payment Status: {booking.mode_of_payment || "PAID thru CASH"}</p>
                                 <p className="font-bold text-lg">₱{booking.receipt_record?.order_reservation_total || 2000}</p>
                               </div>
-                              <Link to={`/booking/${booking._id}`}>
+                              {/* <Link to={`/booking/${booking._id}`}>
                                 <div className="absolute top-0 right-0 z-10 select-none flex flex-row space-x-2">
                                   <Button variant="outline" size="sm">
                                     View Details
                                   </Button>
                                 </div>
-                              </Link>
+                              </Link> */}
                             </div>
                           </div>
                         );

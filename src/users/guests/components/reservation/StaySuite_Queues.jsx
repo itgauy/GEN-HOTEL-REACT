@@ -42,7 +42,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   startOfDay,
@@ -66,11 +65,11 @@ import {
 import { useState, useEffect } from "react";
 import useGuestReserveStore from "../../stores/guest-reserve.store";
 import useGuestBookStore from "../../stores/guest-book.store";
-import Cookies from "js-cookie"; // Import js-cookie
+import Cookies from "js-cookie";
 
 function StaySuite_User_Booking_Queues() {
   const { reservations, loading, error, fetchReservationsId, updateReservation, deleteReservation, createReservation, revalidateReservations } = useGuestReserveStore();
-  const { createGuestBook, guestBook, fetchGuestBook } = useGuestBookStore();
+  const { createGuestBook, guestBook, fetchGuestBook, alertLoading } = useGuestBookStore();
   const navigate = useNavigate();
   const today = startOfDay(new Date());
   const [checkInMain, setCheckInMain] = useState({
@@ -92,7 +91,7 @@ function StaySuite_User_Booking_Queues() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [suffix, setSuffix] = useState("");
-  const [showImportantFacts, setShowImportantFacts] = useState(!Cookies.get("hideBookingQueueImportantFacts")); // Check cookie on load
+  const [showImportantFacts, setShowImportantFacts] = useState(!Cookies.get("hideBookingQueueImportantFacts"));
 
   // Retrieve user data from localStorage
   const authStorage = localStorage.getItem('auth-storage');
@@ -120,7 +119,7 @@ function StaySuite_User_Booking_Queues() {
   // Handle closing the Important Facts message and setting the cookie
   const handleCloseImportantFacts = () => {
     setShowImportantFacts(false);
-    Cookies.set("hideBookingQueueImportantFacts", "true", { expires: 7 }); // Set cookie to expire in 7 days
+    Cookies.set("hideBookingQueueImportantFacts", "true", { expires: 7 });
   };
 
   // Fetch and revalidate reservations on component mount
@@ -190,23 +189,42 @@ function StaySuite_User_Booking_Queues() {
 
   const handleCreateReservation = async () => {
     setIsSubmitting(true);
+    console.log("Starting handleCreateReservation: isSubmitting set to true");
 
     try {
+      // Log input data
+      console.log("Input Data:", {
+        firstName,
+        lastName,
+        suffix,
+        emailAddress,
+        userId,
+      });
+
       if (!firstName || !lastName) {
+        console.log("Validation failed: First name or last name missing");
         alert("Please provide first name and last name.");
         return;
       }
 
       if (reservations.length === 0) {
+        console.log("Validation failed: No reservations found");
         alert("No reservations to submit.");
         return;
       }
+
+      // Log reservations data
+      console.log("Reservations:", reservations);
 
       const reservationRoomIds = reservations
         .map((reservation) => reservation.room_reservation?._id)
         .filter((id) => id);
 
+      // Log derived room IDs
+      console.log("Reservation Room IDs:", reservationRoomIds);
+
       if (reservationRoomIds.length === 0) {
+        console.log("Validation failed: No valid room reservations found");
         alert("No valid room reservations found.");
         return;
       }
@@ -226,22 +244,31 @@ function StaySuite_User_Booking_Queues() {
         },
       };
 
+      // Log the complete payload
       console.log("Form Submission Payload:", JSON.stringify(newGuestBook, null, 2));
 
+      // Call createGuestBook and log the attempt
+      console.log("Calling createGuestBook with payload...");
       await createGuestBook(newGuestBook);
+
+      // Log success
+      console.log("Guest book entry created successfully with payload:", newGuestBook);
 
       alert("Guest book entry created successfully!");
       setFirstName("");
       setLastName("");
       setSuffix("");
-      console.log("Guest book entry created successfully with payload:", newGuestBook);
-
       window.location.href = "/user/onboard/bookings/result";
     } catch (err) {
-      console.error("Error during guest book creation:", err);
+      // Log error details
+      console.error("Error during guest book creation:", {
+        error: err.message,
+        stack: err.stack,
+      });
       alert("Failed to create guest book entry.");
     } finally {
       setIsSubmitting(false);
+      console.log("Finished handleCreateReservation: isSubmitting set to false");
     }
   };
 
@@ -672,6 +699,18 @@ function StaySuite_User_Booking_Queues() {
 
       <section className="lg:col-span-5 lg:sticky lg:top-24 lg:self-start shadow-lg bg-white border rounded-xl p-6">
         <div className="w-full space-y-4">
+          {/* Loading Dialog */}
+          <Dialog open={alertLoading}>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogDescription className="flex flex-col items-center space-y-4">
+                  <LoaderCircle className="h-8 w-8 animate-spin text-muted-foreground" />
+                  <span>Please wait while we process your booking...</span>
+                </DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
+
           <Tabs defaultValue="cash">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="cash">Pay thru Cash</TabsTrigger>
@@ -754,7 +793,7 @@ function StaySuite_User_Booking_Queues() {
 
               <AlertDialog>
                 <AlertDialogTrigger className="w-full">
-                  <Button className="w-full">Proceed</Button>
+                  <Button className="w-full" disabled={isSubmitting}>Proceed</Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>

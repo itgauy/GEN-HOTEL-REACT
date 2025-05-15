@@ -3,8 +3,9 @@ import axios from 'axios';
 
 const useGuestBookStore = create((set, get) => ({
   guestBook: null,
-  activityLogs: [], // Added dedicated state for activity logs
+  activityLogs: [],
   loading: false,
+  alertLoading: false, // New state for loading dialog
   error: null,
 
   // Applicable for per user records (bookings)
@@ -52,17 +53,36 @@ const useGuestBookStore = create((set, get) => ({
   },
 
   createGuestBook: async (data) => {
-    set({ loading: true, error: null });
+    set({ loading: true, alertLoading: true, error: null }); // Enable loading dialog
     try {
       console.log('createGuestBook Payload:', JSON.stringify(data, null, 2));
       const response = await axios.post(import.meta.env.VITE_APP_GUEST_BOOKING, data);
       console.log('createGuestBook Response:', JSON.stringify(response.data, null, 2));
-      set({ guestBook: response.data.data, loading: false });
+      
+      // Add 2-second delay
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      
+      set({ 
+        guestBook: response.data.data, 
+        loading: false, 
+        alertLoading: false // Disable loading dialog
+      });
+      return response.data; // Return response for component to handle success
     } catch (error) {
       console.error('createGuestBook Error:', error.response?.data?.message || 'Failed to create guest book', error);
-      set({ error: error.response?.data?.message || 'Failed to create guest book', loading: false });
+      // Add 2-second delay even on error
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      set({ 
+        error: error.response?.data?.message || 'Failed to create guest book', 
+        loading: false, 
+        alertLoading: false // Disable loading dialog
+      });
+      throw error; // Re-throw for component to handle error
     }
-  }
+  },
+
+  // Optional: Reset alertLoading if needed
+  resetAlertLoading: () => set({ alertLoading: false })
 }));
 
 export default useGuestBookStore;
