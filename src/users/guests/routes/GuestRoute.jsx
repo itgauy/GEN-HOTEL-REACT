@@ -10,6 +10,8 @@ import { CheckAuth, RequiredAuth } from '@/lib/Auth';
 import ProfilePage from '../pages/UserAccount';
 import PayCounterReceipt from '../pages/PayCounterReceipt';
 import BookingSuccess from '../pages/BookingResult';
+import ForumThreads from '../pages/Forum_MainThread';
+import ForumSubThread from '../pages/Forum_SubThread';
 
 const GuestUserRoute = () => [
     <Route path="/user/onboard" element={<RequiredAuth><StaySuite_User /></RequiredAuth>}>
@@ -21,6 +23,8 @@ const GuestUserRoute = () => [
         <Route path="/user/onboard/blog/story" element={<StaySuite_User_Blog_Article />} />
         <Route path="/user/onboard/bookings/result" element={<BookingSuccess />} />
         <Route path="/user/onboard/pay-counter/receipt/:id" element={<PayCounterReceipt />} /> 
+        <Route path="/user/onboard/forums" element={<ForumThreads />} />
+        <Route path="/user/onboard/forums/:id" element={<ForumSubThread />} />
         {/* Just pay attention to PayCounterReceipt */}
     </Route>
 ]
