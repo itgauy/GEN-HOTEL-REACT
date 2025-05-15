@@ -7,6 +7,7 @@ import RoomAdminRoutes from './users/administrators/room_management/routes/RoomA
 import ReservationAdminRoutes from './users/administrators/booking_reservations/routes/ReservationAdmin';
 import KnowledgeAdminRoutes from './users/administrators/knowledge/routes/KnowledgeAdmin';
 import BookingAssistanceRoutes from './users/administrators/booking_assistance/routes/AssistanceAdmin';
+import OverAllAdminRoutes from './users/administrators/overall/routes/OverAllAdmin';
 
 const pageTitles = {
   "/": "Hotels & Condominiums Just for You!",
@@ -41,6 +42,7 @@ function App() {
         {ReservationAdminRoutes()}
         {KnowledgeAdminRoutes()}
         {BookingAssistanceRoutes()}
+        {OverAllAdminRoutes()}
       </Routes>
     </Router>
   );

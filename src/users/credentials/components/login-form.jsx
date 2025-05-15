@@ -52,7 +52,7 @@ export function LoginForm({ className, ...props }) {
       // Role-based navigation
       switch (true) {
         case /Manager/i.test(combinedRole):
-          navigate("/auth/login/manager-check");
+          navigate("/hms-admin");
           break;
         case /Guest User/i.test(combinedRole):
           navigate("/user/onboard");

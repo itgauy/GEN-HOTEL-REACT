@@ -18,7 +18,7 @@ function deleteCookie(name) {
 const handleRoleSelection = (roles = []) => {
   switch (true) {
     case roles.includes("Manager"):
-      return "/auth/login/manager-check";
+      return "/hms-admin";
 
     case roles.includes("Guest User"):
       return "/user/onboard";

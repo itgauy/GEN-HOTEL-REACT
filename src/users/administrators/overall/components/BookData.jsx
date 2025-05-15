@@ -11,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useNavigate } from "react-router-dom";
 
 // Utility to format dates
 const formatDate = (dateString) => {
@@ -29,16 +30,14 @@ const HotelDataTable = ({ data, selectedItems, setSelectedItems }) => {
   // Debug: Log received props
   console.log("HotelDataTable: Received props", { data, selectedItems });
 
-  // Handle Manage action (placeholder)
-  const handleManage = (roomId) => {
-    console.log(`HotelDataTable: Manage room with ID: ${roomId}`);
-    // TODO: Implement navigation or modal for managing room
-  };
+  const navigate = useNavigate();
 
-  // Handle Archive action (placeholder)
-  const handleArchive = (roomId) => {
-    console.log(`HotelDataTable: Archive room with ID: ${roomId}`);
-    // TODO: Implement API call to archive room (e.g., update room_status)
+  // Handle Archive action
+  const handleArchive = (bookingId) => {
+    console.log(`HotelDataTable: Archive booking with ID: ${bookingId}`);
+    setTimeout(() => {
+      navigate("/reservations-admin/bookings/manage");
+    }, 300);
   };
 
   return (
@@ -47,24 +46,10 @@ const HotelDataTable = ({ data, selectedItems, setSelectedItems }) => {
         <TableHeader className="bg-muted/80">
           <TableRow>
             <TableHead className="w-[120px]">
-              <Checkbox
-                className="me-2"
-                checked={data.length > 0 && selectedItems.length === data.length}
-                indeterminate={selectedItems.length > 0 && selectedItems.length < data.length}
-                onCheckedChange={(checked) => {
-                  console.log("HotelDataTable: Header checkbox changed", { checked });
-                  if (checked) {
-                    setSelectedItems(data.map((room) => room.id));
-                  } else {
-                    setSelectedItems([]);
-                  }
-                }}
-              />
               ID
             </TableHead>
-            <TableHead>Room Title</TableHead>
-            {/* <TableHead>Slots</TableHead> */}
-            <TableHead>Capacity</TableHead>
+            <TableHead>Reservation (Hotel Type)</TableHead>
+            <TableHead>Room Capacity</TableHead>
             <TableHead>Issued By</TableHead>
             <TableHead>Date & Time</TableHead>
             <TableHead className="w-[50px]"></TableHead>
@@ -72,42 +57,41 @@ const HotelDataTable = ({ data, selectedItems, setSelectedItems }) => {
         </TableHeader>
         <TableBody className="p-2">
           {data.length > 0 ? (
-            data.map((room) => {
-              console.log("HotelDataTable: Rendering room", room);
+            data.map((booking) => {
+              console.log("HotelDataTable: Rendering booking", booking);
               return (
-                <TableRow key={room.id}>
+                <TableRow key={booking.id}>
                   <TableCell className="max-w-[100px] truncate">
                     <Checkbox
                       className="me-2"
-                      checked={selectedItems.includes(room.id)}
+                      checked={selectedItems.includes(booking.id)}
                       onCheckedChange={(checked) => {
-                        console.log("HotelDataTable: Row checkbox changed", { roomId: room.id, checked });
+                        console.log("HotelDataTable: Row checkbox changed", { bookingId: booking.id, checked });
                         if (checked) {
-                          setSelectedItems([...selectedItems, room.id]);
+                          setSelectedItems([...selectedItems, booking.id]);
                         } else {
-                          setSelectedItems(selectedItems.filter((id) => id !== room.id));
+                          setSelectedItems(selectedItems.filter((id) => id !== booking.id));
                         }
                       }}
                     />
-                    {room.id || "N/A"}
+                    {booking.id || "N/A"}
                   </TableCell>
-                  <TableCell className="max-w-[200px] truncate">{room.title || "N/A"}</TableCell>
-                  {/* <TableCell>{room.slotNumber || "0"}</TableCell> */}
+                  <TableCell className="max-w-[200px] truncate">{booking.title || "N/A"}</TableCell>
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
                       <Badge variant="outline" className="justify-start w-fit">
-                        {room.roomAvailability?.adults ?? 0} Adults
+                        {booking.roomAvailability?.adults ?? 0} Adults
                       </Badge>
                       <Badge variant="outline" className="justify-start w-fit">
-                        {room.roomAvailability?.children ?? 0} Children
+                        {booking.roomAvailability?.children ?? 0} Children
                       </Badge>
                       <Badge variant="outline" className="justify-start w-fit">
-                        {room.roomAvailability?.infants ?? 0} Infants
+                        {booking.roomAvailability?.infants ?? 0} Infants
                       </Badge>
                     </div>
                   </TableCell>
-                  <TableCell>{room.issuedBy || "Unknown"}</TableCell>
-                  <TableCell>{formatDate(room.dateTime)}</TableCell>
+                  <TableCell>{booking.issuedBy || "Unknown"}</TableCell>
+                  <TableCell>{formatDate(booking.dateTime)}</TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -118,10 +102,7 @@ const HotelDataTable = ({ data, selectedItems, setSelectedItems }) => {
                       <DropdownMenuContent>
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => handleManage(room.id)}>
-                          Manage
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleArchive(room.id)}>
+                        <DropdownMenuItem onClick={() => handleArchive(booking.id)}>
                           Archive
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -132,14 +113,8 @@ const HotelDataTable = ({ data, selectedItems, setSelectedItems }) => {
             })
           ) : (
             <TableRow>
-              <TableCell colSpan={7} className="text-center py-8">
+              <TableCell colSpan={6} className="text-center py-8">
                 <div className="flex flex-col items-center justify-center gap-4">
-                  {/* They don't like it heh */}
-                  {/* <img
-                    src="/anubis-mascot.png"
-                    alt="No data"
-                    className="w-48 h-48 object-contain"
-                  /> */}
                   <p className="text-gray-500">No data available</p>
                   {console.log("HotelDataTable: Rendering empty state")}
                 </div>
