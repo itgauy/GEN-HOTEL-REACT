@@ -1,5 +1,7 @@
 # 🏩 Hotel Management System
 
+A Web-based version [see our desktop.](https://github.com/itgauy/GEN-HOTEL-VB)
+
 For our compliance with SIA102 (Systems Integration and Architecture 102) in Quezon City University this project does have
 - Booking Reservation
 - Forum Assistance
