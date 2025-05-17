@@ -10,4 +10,6 @@ Note: In terms of e-payment we wanted to achieve the Stripe's integration but we
 
 Progress: Do not expect it's solely used for academic purposes.
 
+# Technologies
+React, Shadcn, MongoDB, AWS Lambda, AWS API, AWS S3, Nodemailer (SMTP for Emails).
 Author/s: Kenneth O., Frederick M. & Lian T.
