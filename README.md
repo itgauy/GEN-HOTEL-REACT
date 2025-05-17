@@ -1,43 +1,13 @@
-# React + Vite + Shadcn
+# 🏩 Hotel Management System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+For our compliance with SIA102 (Systems Integration and Architecture 102) in Quezon City University this project does have
 
-Currently, here's the project installation:
+- Booking Reservation
+- Forum Assistance
+- Content Management
 
-```
-npm install -g pnpm
-```
+Note: In terms of e-payment we wanted to achieve the Stripe's integration but we ran out of time for some reason talk is cheap keep sending bugs!!
 
-```
-pnpm install --no-frozen-lockfile
-```
+Progress: Do not expect it's solely used for academic purposes.
 
-```
-pnpm run dev
-```
-
-Here's how to add every components that exist in Shadcn (we can now use latest now hurray)
-
-```
-pnpm dlx shadcn@latest add <component-name>
-```
-(For ex: `pnpm dlx shadcn@latest add button`)
-
-```
-pnpm dlx shadcn@latest init
-```
-(This one is optional since it's more on automated shadcn setup)
-
-Reason: TailwindCSS version uses the 3.3.4 yet the v4 as of now has major bug issues.
-
-# Third Party Plugins
-
-This section just include some of the third-party not affiliated to Shadcn alone.
-
-```
-pnpm dlx shadcn@latest add <some links URl in https://originui.com/calendar-date-picker>
-```
-
-# How to contribute?
-
-Since this repository was made to public just made your own fork instead and then after you made any changes just issue your pull request (PR).
+Author/s: Kenneth O., Frederick M. & Lian T.
