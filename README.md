@@ -19,4 +19,4 @@ Progress: Do not expect it's solely used for academic purposes.
 React, Shadcn, MongoDB, AWS Lambda, AWS API, AWS S3, Nodemailer (SMTP for Emails).
 
 # Authors
-Kenneth O., Frederick M. & Lian T.
+Kenneth O., Frederick M., Kenoah Seth H. & Lian T.
