@@ -1,4 +1,4 @@
-# 🏩 Hotel Management System
+# 🏩 Hotel E-Services
 
 A Web-based version [see our desktop.](https://github.com/itgauy/GEN-HOTEL-VB)
 
