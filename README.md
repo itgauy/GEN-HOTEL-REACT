@@ -1,5 +1,8 @@
 # 🏩 Hotel E-Services
 
+> [!NOTE]
+> At this moment the development is still ongoing so it has very bad security measure anyway.
+
 A Web-based version [see our desktop.](https://github.com/itgauy/GEN-HOTEL-VB)
 
 Link: https://hotel-sia-test.vercel.app/
